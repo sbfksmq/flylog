@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import json
+import socket
 from logging.handlers import DatagramHandler
 
 from . import constants
@@ -24,3 +25,9 @@ class FlyLogHandler(DatagramHandler):
             raise
         except:
             self.handleError(record)
+
+    def makeSocket(self):
+        s = DatagramHandler.makeSocket(self)
+        # 非阻塞，sendto在缓冲区满的时候也是可能block的
+        s.setblocking(0)
+        return s
