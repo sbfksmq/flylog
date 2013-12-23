@@ -15,7 +15,12 @@ class FlyLogHandler(DatagramHandler):
                                  port or constants.FLY_LOG_AGENT_PORT)
         self.source = source
 
-    def send(self, s):
-        send_data = json.dumps(dict(source=self.source, content=s))
-
-        return DatagramHandler.send(self, send_data)
+    def emit(self, record):
+        content = self.format(record)
+        try:
+            s = json.dumps(dict(source=self.source, content=content))
+            self.send(s)
+        except (KeyboardInterrupt, SystemExit):
+            raise
+        except:
+            self.handleError(record)
