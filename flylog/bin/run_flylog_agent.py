@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-启动 ga_agent
+启动 flylog_agent
 """
 
 import imp
@@ -124,7 +124,7 @@ def load_config(filename):
     return d
 
 
-def run_ga_agent():
+def run_flylog_agent():
     global debug
 
     configure_logging()
@@ -146,4 +146,4 @@ def run_ga_agent():
         sys.exit(0)
 
 if __name__ == '__main__':
-    run_ga_agent()
+    run_flylog_agent()
