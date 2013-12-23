@@ -100,8 +100,8 @@ debug = False
 
 def build_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--host', default=constants.FLY_LOG_AGENT_HOST, help='bind host', action='store')
-    parser.add_argument('-p', '--port', default=constants.FLY_LOG_AGENT_PORT, type=int, help='bind port', action='store')
+    parser.add_argument('-t', '--host', default=constants.AGENT_HOST, help='bind host', action='store')
+    parser.add_argument('-p', '--port', default=constants.AGENT_PORT, type=int, help='bind port', action='store')
     parser.add_argument('-c', '--config', help='config file', action='store', required=True)
     parser.add_argument('-d', '--debug', default=False, help='debug mode', action='store_true')
     parser.add_argument('-v', '--version', action='version', version='%s' % flylog.__version__)

@@ -11,8 +11,8 @@ class FlyLogHandler(DatagramHandler):
 
     def __init__(self, host=None, port=None, source=None):
         DatagramHandler.__init__(self,
-                                 host or constants.FLY_LOG_AGENT_HOST,
-                                 port or constants.FLY_LOG_AGENT_PORT)
+                                 host or constants.AGENT_HOST,
+                                 port or constants.AGENT_PORT)
         self.source = source
 
     def emit(self, record):

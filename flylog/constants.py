@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
 
-FLY_LOG_AGENT_LOG_NAME = 'flylog'
-FLY_LOG_AGENT_HOST = '127.0.0.1'
-FLY_LOG_AGENT_PORT = 12000
+AGENT_LOG_NAME = 'flylog'
+AGENT_HOST = '127.0.0.1'
+AGENT_PORT = 12000
