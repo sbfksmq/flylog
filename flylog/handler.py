@@ -29,5 +29,6 @@ class FlyLogHandler(DatagramHandler):
     def makeSocket(self):
         s = DatagramHandler.makeSocket(self)
         # 非阻塞，sendto在缓冲区满的时候也是可能block的
-        s.setblocking(0)
+        if s:
+            s.setblocking(0)
         return s
