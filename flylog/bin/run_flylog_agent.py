@@ -136,8 +136,8 @@ def run_flylog_agent():
     # 设置到全局配置里
     debug = prog.debug = args.debug
 
-    logger.info("Running FlyLogAgent on %(host)s:%(port)s, debug:%(debug)s" % dict(
-        host=args.host, port=args.port, debug=args.debug)
+    logger.info("Running FlyLogAgent on %(host)s:%(port)s, config:%(config)s, debug:%(debug)s" % dict(
+        host=args.host, port=args.port, config=args.config, debug=args.debug)
     )
 
     try:

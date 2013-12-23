@@ -27,7 +27,7 @@ LOGGING = {
     'handlers': {
         'flylog': {
             'level': 'CRITICAL',
-            'class': 'flylog.handler.FlyLogHandler',
+            'class': 'flylog.FlyLogHandler',
             'formatter': 'standard',
             'source': u'demo测试',
         },
