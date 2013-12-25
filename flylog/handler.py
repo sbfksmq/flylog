@@ -9,17 +9,24 @@ from . import constants
 
 class FlyLogHandler(DatagramHandler):
     source = None
+    source_ip = None
 
     def __init__(self, host=None, port=None, source=None):
         DatagramHandler.__init__(self,
                                  host or constants.AGENT_HOST,
                                  port or constants.AGENT_PORT)
+
+        # source_ip
+        if not self.__class__.source_ip:
+            self.__class__.source_ip = socket.gethostbyname(socket.gethostname()) or ''
+
         self.source = source
 
     def emit(self, record):
+        source = '%s@%s' % (self.source, self.__class__.source_ip)
         content = self.format(record)
         try:
-            s = json.dumps(dict(source=self.source, content=content))
+            s = json.dumps(dict(source=source, content=content))
             self.send(s)
         except (KeyboardInterrupt, SystemExit):
             raise
