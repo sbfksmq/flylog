@@ -69,13 +69,13 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
 class FlyLogAgent(SocketServer.ThreadingUDPServer):
     debug = False
 
-    def __init__(self, host=None, port=None, config=None, log_name=None):
+    def __init__(self, host=None, port=None, config=None, logger_name=None):
         # 因为父类继承是用的老风格，所以必须按照下面的方式来写。 不能使用 super(GAAgent, self).__init__
         SocketServer.ThreadingUDPServer.__init__(self,
                                                  (host or constants.AGENT_HOST,
                                                   port or constants.AGENT_PORT),
                                                  ThreadedUDPRequestHandler)
-        self.logger = logging.getLogger(log_name or constants.AGENT_LOG_NAME)
+        self.logger = logging.getLogger(logger_name or constants.AGENT_LOGGER_NAME)
         self.config = config
 
     def run(self):
