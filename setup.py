@@ -1,9 +1,8 @@
 from setuptools import setup
-import flylog
 
 setup(
     name="flylog",
-    version=flylog.__version__,
+    version='0.1.17',
     zip_safe=False,
     platforms='any',
     packages=['flylog'],
