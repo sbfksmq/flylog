@@ -54,12 +54,12 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
             mail_receiver_list = self.server.config.MAIL_RECEIVER_LIST
         else:
             # 否则配置了什么就是什么
-            mail_receiver_set = set()
+            mail_receiver_list = []
             for role, receiver_list in getattr(self.server.config, 'MAIL_ROLE_TO_RECEIVER_LIST', dict()).items():
                 if role in role_list:
-                    mail_receiver_set += set(receiver_list)
+                    mail_receiver_list.extend(receiver_list)
 
-            mail_receiver_list = list(mail_receiver_set)
+            mail_receiver_list = list(set(mail_receiver_list))
 
         if not mail_receiver_list:
             # 如果没有接收者，就直接返回了
