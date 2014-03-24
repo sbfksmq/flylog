@@ -30,6 +30,7 @@ LOGGING = {
             'class': 'flylog.FlyLogHandler',
             'formatter': 'standard',
             'source': u'demo测试',
+            'role_list': None,
         },
         'console': {
             'level': 'DEBUG',

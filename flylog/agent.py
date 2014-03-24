@@ -47,13 +47,23 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
     def _handle_message(self, message):
         recv_dict = json.loads(message)
 
-        role_list = recv_dict.get('role_list') or []
-        mail_receiver_set = set()
-        for role, receiver_list in getattr(self.server.config, 'MAIL_ROLE_TO_RECEIVER_LIST', dict()).items():
-            if role in role_list:
-                mail_receiver_set += set(receiver_list)
+        role_list = recv_dict.get('role_list')
 
-        mail_receiver_list = list(mail_receiver_set) or self.server.config.MAIL_RECEIVER_LIST
+        if role_list is None:
+            # 如果role_list为null，就代表走默认的receiver_list
+            mail_receiver_list = self.server.config.MAIL_RECEIVER_LIST
+        else:
+            # 否则配置了什么就是什么
+            mail_receiver_set = set()
+            for role, receiver_list in getattr(self.server.config, 'MAIL_ROLE_TO_RECEIVER_LIST', dict()).items():
+                if role in role_list:
+                    mail_receiver_set += set(receiver_list)
+
+            mail_receiver_list = list(mail_receiver_set)
+
+        if not mail_receiver_list:
+            # 如果没有接收者，就直接返回了
+            return
 
         mail_msg = MIMEText(recv_dict.get('content'), 'plain', 'utf-8')
         mail_msg['Subject'] = Header(u'[%s]Attention!' % recv_dict.get('source'), 'utf-8')
