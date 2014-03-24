@@ -46,6 +46,15 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
 
     def _handle_message(self, message):
         recv_dict = json.loads(message)
+
+        role_list = recv_dict.get('role_list') or []
+        mail_receiver_set = set()
+        for role, receiver_list in getattr(self.server.config, 'MAIL_ROLE_TO_RECEIVER_LIST', dict()).items():
+            if role in role_list:
+                mail_receiver_set += set(receiver_list)
+
+        mail_receiver_list = list(mail_receiver_set) or self.server.config.MAIL_RECEIVER_LIST
+
         mail_msg = MIMEText(recv_dict.get('content'), 'plain', 'utf-8')
         mail_msg['Subject'] = Header(u'[%s]Attention!' % recv_dict.get('source'), 'utf-8')
         mail_msg['From'] = self.server.config.MAIL_SENDER
@@ -54,7 +63,7 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
 
         # 发邮件
         mail_client = self._configure_mail_host()
-        mail_client.sendmail(self.server.config.MAIL_SENDER, self.server.config.MAIL_RECEIVER_LIST, mail_msg.as_string())
+        mail_client.sendmail(self.server.config.MAIL_SENDER, mail_receiver_list, mail_msg.as_string())
         mail_client.quit()
 
     def handle(self):

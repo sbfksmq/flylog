@@ -10,8 +10,9 @@ from . import constants
 class FlyLogHandler(DatagramHandler):
     source = None
     source_ip = None
+    role_list = None
 
-    def __init__(self, host=None, port=None, source=None):
+    def __init__(self, host=None, port=None, source=None, role_list=None):
         DatagramHandler.__init__(self,
                                  host or constants.AGENT_HOST,
                                  port or constants.AGENT_PORT)
@@ -21,12 +22,13 @@ class FlyLogHandler(DatagramHandler):
             self.__class__.source_ip = socket.gethostbyname(socket.gethostname()) or ''
 
         self.source = source
+        self.role_list = role_list
 
     def emit(self, record):
         source = '%s@%s' % (self.source, self.__class__.source_ip)
         content = self.format(record)
         try:
-            s = json.dumps(dict(source=source, content=content))
+            s = json.dumps(dict(source=source, role_list=self.role_list, content=content))
             self.send(s)
         except (KeyboardInterrupt, SystemExit):
             raise
