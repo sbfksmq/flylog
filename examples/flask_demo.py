@@ -1,7 +1,4 @@
 # -*- coding: utf-8 -*-
-import sys
-sys.path.insert(0, '..')
-
 from flask import Flask
 
 LOG_FORMAT = '\n'.join((
