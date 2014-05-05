@@ -13,7 +13,6 @@ import logging
 import logging.config
 
 import sys
-sys.path.insert(0, '../../')
 import flylog
 from flylog import FlyLogAgent
 from flylog import constants
