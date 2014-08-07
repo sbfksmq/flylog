@@ -1,11 +1,11 @@
-from setuptools import setup
+from setuptools import setup, find_packages
 
 setup(
     name="flylog",
     version='0.1.19',
     zip_safe=False,
     platforms='any',
-    packages=['flylog'],
+    packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     scripts=['flylog/bin/run_flylog_agent.py'],
     url="https://github.com/dantezhu/flylog",
     license="BSD",
