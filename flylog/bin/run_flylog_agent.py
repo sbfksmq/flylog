@@ -79,11 +79,6 @@ LOGGING = {
     },
 
     'loggers': {
-        'default': {
-            'handlers': ['console', 'rotating_file'],
-            'level': 'DEBUG',
-            'propagate': False
-        },
         'flylog': {
             'handlers': ['console', 'rotating_file'],
             'level': 'DEBUG',
@@ -93,7 +88,7 @@ LOGGING = {
 }
 
 
-logger = logging.getLogger('default')
+logger = logging.getLogger('flylog')
 debug = False
 
 
@@ -130,7 +125,7 @@ def run_flylog_agent():
 
     args = build_parser().parse_args()
 
-    prog = FlyLogAgent(args.host, args.port, config=load_config(args.config))
+    prog = FlyLogAgent(config=load_config(args.config))
 
     # 设置到全局配置里
     debug = prog.debug = args.debug
@@ -140,7 +135,7 @@ def run_flylog_agent():
     )
 
     try:
-        prog.run()
+        prog.run(args.host, args.port)
     except KeyboardInterrupt:
         sys.exit(0)
 

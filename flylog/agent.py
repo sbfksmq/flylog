@@ -34,7 +34,7 @@ class FlyLogAgent(object):
         else:
             mail_client = smtplib.SMTP(self.config.MAIL_SERVER, self.config.MAIL_PORT)
 
-        mail_client.set_debuglevel(self.debug)
+        mail_client.set_debuglevel(int(self.debug))
 
         if self.config.MAIL_USE_TLS:
             mail_client.starttls()
