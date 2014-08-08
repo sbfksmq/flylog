@@ -21,26 +21,32 @@ from email.mime.text import MIMEText
 from email.header import Header
 from email.utils import formatdate
 
-import constants
+logger = logging.getLogger('flylog')
 
 
-class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
+class FlyLogAgent(object):
+    debug = False
+
+    def __init__(self, config=None, debug=None):
+        self.config = config
+        if debug is not None:
+            self.debug = debug
 
     def _configure_mail_host(self):
         mail_client = None
 
-        if self.server.config.MAIL_USE_SSL:
-            mail_client = smtplib.SMTP_SSL(self.server.config.MAIL_SERVER, self.server.config.MAIL_PORT)
+        if self.config.MAIL_USE_SSL:
+            mail_client = smtplib.SMTP_SSL(self.config.MAIL_SERVER, self.config.MAIL_PORT)
         else:
-            mail_client = smtplib.SMTP(self.server.config.MAIL_SERVER, self.server.config.MAIL_PORT)
+            mail_client = smtplib.SMTP(self.config.MAIL_SERVER, self.config.MAIL_PORT)
 
-        mail_client.set_debuglevel(self.server.debug)
+        mail_client.set_debuglevel(self.debug)
 
-        if self.server.config.MAIL_USE_TLS:
+        if self.config.MAIL_USE_TLS:
             mail_client.starttls()
 
-        if self.server.config.MAIL_USERNAME and self.server.config.MAIL_PASSWORD:
-            mail_client.login(self.server.config.MAIL_USERNAME, self.server.config.MAIL_PASSWORD)
+        if self.config.MAIL_USERNAME and self.config.MAIL_PASSWORD:
+            mail_client.login(self.config.MAIL_USERNAME, self.config.MAIL_PASSWORD)
 
         return mail_client
 
@@ -51,11 +57,11 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
 
         if role_list is None:
             # 如果role_list为null，就代表走默认的receiver_list
-            mail_receiver_list = self.server.config.MAIL_RECEIVER_LIST
+            mail_receiver_list = self.config.MAIL_RECEIVER_LIST
         else:
             # 否则配置了什么就是什么
             mail_receiver_list = []
-            for role, receiver_list in getattr(self.server.config, 'MAIL_ROLE_TO_RECEIVER_LIST', dict()).items():
+            for role, receiver_list in getattr(self.config, 'MAIL_ROLE_TO_RECEIVER_LIST', dict()).items():
                 if role in role_list:
                     mail_receiver_list.extend(receiver_list)
 
@@ -67,44 +73,32 @@ class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
 
         mail_msg = MIMEText(recv_dict.get('content'), 'plain', 'utf-8')
         mail_msg['Subject'] = Header(u'[%s]Attention!' % recv_dict.get('source'), 'utf-8')
-        mail_msg['From'] = self.server.config.MAIL_SENDER
-        mail_msg['To'] = ', '.join(self.server.config.MAIL_RECEIVER_LIST)
+        mail_msg['From'] = self.config.MAIL_SENDER
+        mail_msg['To'] = ', '.join(self.config.MAIL_RECEIVER_LIST)
         mail_msg['Date'] = formatdate()
 
         # 发邮件
         mail_client = self._configure_mail_host()
-        mail_client.sendmail(self.server.config.MAIL_SENDER, mail_receiver_list, mail_msg.as_string())
+        mail_client.sendmail(self.config.MAIL_SENDER, mail_receiver_list, mail_msg.as_string())
         mail_client.quit()
 
-    def handle(self):
-        message = self.request[0]
-        self.server.logger.debug("message, len: %s, content: %s", len(message), message)
+    def process(self, data, address):
         try:
-            self._handle_message(message)
+            self._handle_message(data)
         except Exception, e:
-            self.server.logger.error('exception occur. e: %s', e)
+            logger.error('exc occur.', exc_info=True)
 
+    def run(self, host, port):
+        class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
+            def handle(sub_self):
+                data = sub_self.request[0]
+                self.process(data, sub_self.client_address)
 
-class FlyLogAgent(SocketServer.ThreadingUDPServer):
-    debug = False
+        server = SocketServer.ThreadingUDPServer((host, port), ThreadedUDPRequestHandler)
 
-    def __init__(self, host=None, port=None, config=None, logger_name=None):
-        # 因为父类继承是用的老风格，所以必须按照下面的方式来写。 不能使用 super(GAAgent, self).__init__
-        SocketServer.ThreadingUDPServer.__init__(self,
-                                                 (host or constants.AGENT_HOST,
-                                                  port or constants.AGENT_PORT),
-                                                 ThreadedUDPRequestHandler)
-        self.logger = logging.getLogger(logger_name or constants.AGENT_LOGGER_NAME)
-        self.config = config
-
-    def run(self):
-        server_thread = threading.Thread(target=self.serve_forever)
-        # Exit the server thread when the main thread terminates
-        server_thread.daemon = True
-        server_thread.start()
-
-        # 因为daemon设置为true，所以不做while循环会直接退出
-        # 而之所以把 daemon 设置为true，是为了防止进程不结束的问题
-        while True:
-            time.sleep(1)
-
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        except:
+            logger.error('exc occur.', exc_info=True)
