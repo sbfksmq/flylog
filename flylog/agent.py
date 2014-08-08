@@ -7,15 +7,9 @@
 """
 
 import json
-import functools
 import logging
 import logging.config
-import socket
-import threading
 import SocketServer
-import signal
-import sys
-import time
 import smtplib
 from email.mime.text import MIMEText
 from email.header import Header
@@ -50,7 +44,7 @@ class FlyLogAgent(object):
 
         return mail_client
 
-    def _handle_message(self, message):
+    def handle_message(self, message, address):
         recv_dict = json.loads(message)
 
         role_list = recv_dict.get('role_list')
@@ -82,17 +76,14 @@ class FlyLogAgent(object):
         mail_client.sendmail(self.config.MAIL_SENDER, mail_receiver_list, mail_msg.as_string())
         mail_client.quit()
 
-    def process(self, data, address):
-        try:
-            self._handle_message(data)
-        except Exception, e:
-            logger.error('exc occur.', exc_info=True)
-
     def run(self, host, port):
         class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
             def handle(sub_self):
-                data = sub_self.request[0]
-                self.process(data, sub_self.client_address)
+                message = sub_self.request[0]
+                try:
+                    self.handle_message(message, sub_self.client_address)
+                except:
+                    logger.error('exc occur.', exc_info=True)
 
         server = SocketServer.ThreadingUDPServer((host, port), ThreadedUDPRequestHandler)
 
