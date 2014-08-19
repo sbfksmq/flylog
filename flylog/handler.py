@@ -18,8 +18,16 @@ class FlyLogHandler(DatagramHandler):
                                  port or constants.AGENT_PORT)
 
         # source_ip
-        if not self.__class__.source_ip:
-            self.__class__.source_ip = socket.gethostbyname(socket.gethostname()) or ''
+        cls = self.__class__
+        if not cls.source_ip:
+            try:
+                # 一步步来，这样第二步报错时，起码也把名字设置上了
+                cls.source_ip = socket.gethostname()
+                cls.source_ip = socket.gethostbyname(cls.source_ip)
+            except:
+                pass
+
+            cls.source_ip = cls.source_ip or 'none'
 
         self.source = source
         self.role_list = role_list
