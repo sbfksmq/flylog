@@ -23,7 +23,8 @@ class FlyLogHandler(DatagramHandler):
             try:
                 # 一步步来，这样第二步报错时，起码也把名字设置上了
                 cls.source_ip = socket.gethostname()
-                cls.source_ip = socket.gethostbyname(cls.source_ip)
+                # 有些电脑上会很慢，还是不用了，就用名字算了
+                # cls.source_ip = socket.gethostbyname(cls.source_ip)
             except:
                 pass
 
