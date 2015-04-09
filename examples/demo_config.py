@@ -1,18 +1,19 @@
 # -*- coding: utf-8 -*-
 import smtplib
 
-MAIL_SERVER = 'smtp.qq.com'
-MAIL_USERNAME = 'xxx@qq.com'
-MAIL_PASSWORD = 'xxxxxxx'
-MAIL_USE_TLS = False
-MAIL_USE_SSL = False
-if MAIL_USE_SSL:
-    MAIL_PORT = smtplib.SMTP_SSL_PORT
-else:
-    MAIL_PORT = smtplib.SMTP_PORT
-MAIL_SENDER = 'xxx@qq.com'
-MAIL_RECEIVER_LIST = ['xxx@qq.com']
+MAIL_SENDER_LIST = [
+    dict(
+        host='smtp.qq.com',
+        port=smtplib.SMTP_PORT,  # smtplib.SMTP_SSL_PORT
+        username='xxx@qq.com',
+        password='xxxx',
+        sender='xxx@qq.com',
+        use_ssl=False,
+        use_tls=False,
+    ),
+]
 
-MAIL_ROLE_TO_RECEIVER_LIST = dict(
+MAIL_RECEIVER_LIST = dict(
+    default=['fx@qq.com'],
     pdm=['f@qq.com']
 )

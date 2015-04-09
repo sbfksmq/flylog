@@ -10,6 +10,8 @@ import json
 import logging
 import logging.config
 import SocketServer
+import copy
+import random
 
 logger = logging.getLogger('flylog')
 
@@ -22,7 +24,7 @@ class FlyLogAgent(object):
         if debug is not None:
             self.debug = debug
 
-    def sendmail(self, server, port, sender, receivers, subject, content,
+    def sendmail(self, host, port, sender, receivers, subject, content,
                  content_type='plain', encoding='utf-8',
                  username=None, password=None, use_ssl=False, use_tls=False, debuglevel=0
                  ):
@@ -42,9 +44,9 @@ class FlyLogAgent(object):
         mail_msg['Date'] = formatdate()
 
         if use_ssl:
-            mail_client = smtplib.SMTP_SSL(server, port)
+            mail_client = smtplib.SMTP_SSL(host, port)
         else:
-            mail_client = smtplib.SMTP(server, port)
+            mail_client = smtplib.SMTP(host, port)
 
         mail_client.set_debuglevel(debuglevel)
 
@@ -61,31 +63,39 @@ class FlyLogAgent(object):
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
 
-        role_list = recv_dict.get('role_list')
+        role_list = recv_dict.get('role_list') or ('default',)
+        receiver_list = []
+        for role, one_receiver_list in self.config.MAIL_RECEIVER_LIST.items():
+            if role in role_list:
+                receiver_list.extend(one_receiver_list)
 
-        if role_list is None:
-            # 如果role_list为null，就代表走默认的receiver_list
-            mail_receiver_list = self.config.MAIL_RECEIVER_LIST
-        else:
-            # 否则配置了什么就是什么
-            mail_receiver_list = []
-            for role, receiver_list in getattr(self.config, 'MAIL_ROLE_TO_RECEIVER_LIST', dict()).items():
-                if role in role_list:
-                    mail_receiver_list.extend(receiver_list)
+        receiver_list = list(set(receiver_list))
 
-            mail_receiver_list = list(set(mail_receiver_list))
-
-        if not mail_receiver_list:
+        if not receiver_list:
             # 如果没有接收者，就直接返回了
             return
 
-        try:
-            self.sendmail(self.config.MAIL_SERVER, self.config.MAIL_PORT, self.config.MAIL_SENDER, mail_receiver_list,
-                          u'[%s]Attention!' % recv_dict.get('source'), recv_dict.get('content'),
-                          username=self.config.MAIL_USERNAME, password=self.config.MAIL_PASSWORD,
-                          use_ssl=self.config.MAIL_USE_SSL, use_tls=self.config.MAIL_USE_TLS)
-        except:
-            logger.error("exc occur. message: %r", message, exc_info=True)
+        sender_list = list(copy.deepcopy(self.config.MAIL_SENDER_LIST))
+
+        while sender_list:
+            # 只要还有sender
+            # 保证随机
+            random.shuffle(sender_list)
+
+            # 取出最后一个
+            mail_values = sender_list.pop()
+            print mail_values
+            mail_values['receivers'] = receiver_list
+            mail_values['subject'] = u'[%s]Attention!' % recv_dict.get('source')
+            mail_values['content'] = recv_dict.get('content')
+
+            try:
+                self.sendmail(**mail_values)
+            except:
+                logger.error("exc occur. mail_values: %s", mail_values, exc_info=True)
+            else:
+                # 如果成功发送
+                break
 
     def run(self, host, port):
         class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
