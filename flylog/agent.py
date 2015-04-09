@@ -84,7 +84,6 @@ class FlyLogAgent(object):
 
             # 取出最后一个
             mail_values = sender_list.pop()
-            print mail_values
             mail_values['receivers'] = receiver_list
             mail_values['subject'] = u'[%s]Attention!' % recv_dict.get('source')
             mail_values['content'] = recv_dict.get('content')
