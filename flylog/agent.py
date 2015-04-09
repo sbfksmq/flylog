@@ -10,10 +10,6 @@ import json
 import logging
 import logging.config
 import SocketServer
-import smtplib
-from email.mime.text import MIMEText
-from email.header import Header
-from email.utils import formatdate
 
 logger = logging.getLogger('flylog')
 
@@ -26,23 +22,41 @@ class FlyLogAgent(object):
         if debug is not None:
             self.debug = debug
 
-    def _configure_mail_host(self):
-        mail_client = None
+    def sendmail(self, server, port, sender, receivers, subject, content,
+                 content_type='plain', encoding='utf-8',
+                 username=None, password=None, use_ssl=False, use_tls=False, debuglevel=0
+                 ):
+        """
+        发送邮件
+        content_type: plain / html
+        """
+        import smtplib
+        from email.mime.text import MIMEText
+        from email.header import Header
+        from email.utils import formatdate
 
-        if self.config.MAIL_USE_SSL:
-            mail_client = smtplib.SMTP_SSL(self.config.MAIL_SERVER, self.config.MAIL_PORT)
+        mail_msg = MIMEText(content, content_type, encoding)
+        mail_msg['Subject'] = Header(subject, encoding)
+        mail_msg['From'] = sender
+        mail_msg['To'] = ', '.join(receivers)
+        mail_msg['Date'] = formatdate()
+
+        if use_ssl:
+            mail_client = smtplib.SMTP_SSL(server, port)
         else:
-            mail_client = smtplib.SMTP(self.config.MAIL_SERVER, self.config.MAIL_PORT)
+            mail_client = smtplib.SMTP(server, port)
 
-        mail_client.set_debuglevel(int(self.debug))
+        mail_client.set_debuglevel(debuglevel)
 
-        if self.config.MAIL_USE_TLS:
+        if use_tls:
             mail_client.starttls()
 
-        if self.config.MAIL_USERNAME and self.config.MAIL_PASSWORD:
-            mail_client.login(self.config.MAIL_USERNAME, self.config.MAIL_PASSWORD)
+        if username and password:
+            mail_client.login(username, password)
 
-        return mail_client
+        # 发邮件
+        mail_client.sendmail(sender, receivers, mail_msg.as_string())
+        mail_client.quit()
 
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
@@ -65,16 +79,13 @@ class FlyLogAgent(object):
             # 如果没有接收者，就直接返回了
             return
 
-        mail_msg = MIMEText(recv_dict.get('content'), 'plain', 'utf-8')
-        mail_msg['Subject'] = Header(u'[%s]Attention!' % recv_dict.get('source'), 'utf-8')
-        mail_msg['From'] = self.config.MAIL_SENDER
-        mail_msg['To'] = ', '.join(self.config.MAIL_RECEIVER_LIST)
-        mail_msg['Date'] = formatdate()
-
-        # 发邮件
-        mail_client = self._configure_mail_host()
-        mail_client.sendmail(self.config.MAIL_SENDER, mail_receiver_list, mail_msg.as_string())
-        mail_client.quit()
+        try:
+            self.sendmail(self.config.MAIL_SERVER, self.config.MAIL_PORT, self.config.MAIL_SENDER, mail_receiver_list,
+                          u'[%s]Attention!' % recv_dict.get('source'), recv_dict.get('content'),
+                          username=self.config.MAIL_USERNAME, password=self.config.MAIL_PASSWORD,
+                          use_ssl=self.config.MAIL_USE_SSL, use_tls=self.config.MAIL_USE_TLS)
+        except:
+            logger.error("exc occur. message: %r", message, exc_info=True)
 
     def run(self, host, port):
         class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
