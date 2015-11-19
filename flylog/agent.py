@@ -56,7 +56,7 @@ def send_mail(host, port, sender, receivers, subject, content,
 def send_push(app_key, app_secret, title, content, tags):
     """
     发送push
-    因为到了本地之后要缓存起来，所以只能走自定义消息
+    到了本地之后要缓存起来
     """
 
     import jpush
