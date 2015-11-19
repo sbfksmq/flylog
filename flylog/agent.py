@@ -69,7 +69,7 @@ def send_push(app_key, app_secret, content, tags):
     push.platform = jpush.all_
     # 如果不设置，默认发送到生产环境
     # 设置为False，代表发送到开发环境。
-    push.options = {"apns_production":False}
+    push.options = {"apns_production": False}
     try:
         push.send()
         return True
