@@ -16,7 +16,7 @@ import random
 logger = logging.getLogger('flylog')
 
 
-def sendmail(host, port, sender, receivers, subject, content,
+def send_mail(host, port, sender, receivers, subject, content,
              content_type='plain', encoding='utf-8',
              username=None, password=None, use_ssl=False, use_tls=False, debuglevel=0
              ):
@@ -53,6 +53,31 @@ def sendmail(host, port, sender, receivers, subject, content,
     mail_client.quit()
 
 
+def send_push(app_key, app_secret, content, tags):
+    """
+    发送push
+    """
+
+    import jpush
+
+    _jpush = jpush.JPush(app_key, app_secret)
+    push = _jpush.create_push()
+    push.audience = jpush.audience(
+        jpush.tag(*tags),
+    )
+    push.notification = jpush.notification(alert=content)
+    push.platform = jpush.all_
+    # 如果不设置，默认发送到生产环境
+    # 设置为False，代表发送到开发环境。
+    push.options = {"apns_production":False}
+    try:
+        push.send()
+        return True
+    except Exception, e:
+        # logger.error(u"jpush failed, tags: %s\ncontent: %s", tags, content, exc_info=True)
+        return False
+
+
 class FlyLogAgent(object):
     debug = False
 
@@ -61,9 +86,10 @@ class FlyLogAgent(object):
         if debug is not None:
             self.debug = debug
 
-    def handle_message(self, message, address):
-        recv_dict = json.loads(message)
-
+    def _handle_message_by_mail(self, recv_dict):
+        """
+        通过邮件处理消息
+        """
         role_list = recv_dict.get('role_list') or ('default',)
         receiver_list = []
         for role, one_receiver_list in self.config.MAIL_RECEIVER_LIST.items():
@@ -90,12 +116,28 @@ class FlyLogAgent(object):
             mail_values['content'] = recv_dict.get('content')
 
             try:
-                sendmail(**mail_values)
+                send_mail(**mail_values)
             except:
                 logger.error("exc occur. mail_values: %s", mail_values, exc_info=True)
             else:
                 # 如果成功发送
                 break
+
+    def _handle_message_by_push(self, recv_dict):
+        """
+        通过push处理消息
+        """
+        role_list = recv_dict.get('role_list') or ('default',)
+        send_push(self.config.PUSH_APP_KEY, self.config.PUSH_APP_SECRET, recv_dict.get('content'))
+
+    def handle_message(self, message, address):
+        recv_dict = json.loads(message)
+
+        if self.config.NOTIFY_TYPE & self.config.NOTIFY_TYPE_MAIL:
+            self._handle_message_by_mail(recv_dict)
+
+        if self.config.NOTIFY_TYPE & self.config.NOTIFY_TYPE_PUSH:
+            self._handle_message_by_push(recv_dict)
 
     def run(self, host, port):
         class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
