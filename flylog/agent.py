@@ -53,9 +53,10 @@ def send_mail(host, port, sender, receivers, subject, content,
     mail_client.quit()
 
 
-def send_push(app_key, app_secret, content, tags):
+def send_push(app_key, app_secret, title, content, tags):
     """
     发送push
+    因为到了本地之后要缓存起来，所以只能走自定义消息
     """
 
     import jpush
@@ -65,7 +66,17 @@ def send_push(app_key, app_secret, content, tags):
     push.audience = jpush.audience(
         jpush.tag(*tags),
     )
-    push.notification = jpush.notification(alert=content)
+    # 自定义消息，ios只能在前台收到，所以要用通知
+    push.notification = jpush.notification(
+        ios=jpush.ios(title, extras=dict(
+            content=content,
+        )),
+        android=jpush.android(title, extras=dict(
+            content=content
+        ))
+    )
+    push.platform = jpush.all_
+
     push.platform = jpush.all_
     # 如果不设置，默认发送到生产环境
     # 设置为False，代表发送到开发环境。
@@ -128,7 +139,8 @@ class FlyLogAgent(object):
         通过push处理消息
         """
         role_list = recv_dict.get('role_list') or ('default',)
-        send_push(self.config.PUSH_APP_KEY, self.config.PUSH_APP_SECRET, recv_dict.get('content'), role_list)
+        # content太长显示不了
+        send_push(self.config.PUSH_APP_KEY, self.config.PUSH_APP_SECRET, recv_dict.get('title'), role_list)
 
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
