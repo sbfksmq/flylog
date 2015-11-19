@@ -31,4 +31,3 @@ MAIL_RECEIVER_LIST = dict(
 # push相关
 PUSH_APP_KEY = ''
 PUSH_APP_SECRET = ''
-PUSH_RECEIVER_LIST = ['default', 'pdm']

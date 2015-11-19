@@ -128,7 +128,7 @@ class FlyLogAgent(object):
         通过push处理消息
         """
         role_list = recv_dict.get('role_list') or ('default',)
-        send_push(self.config.PUSH_APP_KEY, self.config.PUSH_APP_SECRET, recv_dict.get('content'))
+        send_push(self.config.PUSH_APP_KEY, self.config.PUSH_APP_SECRET, recv_dict.get('content'), role_list)
 
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
