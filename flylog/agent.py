@@ -23,7 +23,7 @@ class FlyLogAgent(object):
             self.debug = debug
 
         self.backend_dict = dict()
-        for name, backend_conf in self.config.BACKEND_LIST:
+        for name, backend_conf in self.config.BACKEND_LIST.items():
             _class = import_string(backend_conf['class'])
             backend = _class(**backend_conf['init_data'])
 
