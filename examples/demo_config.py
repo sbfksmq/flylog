@@ -22,7 +22,7 @@ MAIL_RECEIVER_LIST = dict(
 BACKEND_LIST = {
     'mail': {
         'class': 'flylog.backends.MailBackend',
-        'params': {
+        'init_data': {
             'host': 'smtp.qq.com',
             'port': smtplib.SMTP_PORT,  # smtplib.SMTP_SSL_PORT
             'username': 'xxx@qq.com',
@@ -34,7 +34,7 @@ BACKEND_LIST = {
     },
     'ding': {
         'class': 'flylog.backends.DingBackend',
-        'params': {
+        'init_data': {
             'corp_id': '',
             'corp_secret': '',
         }
