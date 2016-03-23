@@ -5,6 +5,8 @@
 启动 flylog_agent
 """
 
+from gevent import monkey; monkey.patch_all()
+
 import imp
 import argparse
 import logging

@@ -7,7 +7,8 @@
 """
 
 import json
-import SocketServer
+import gevent
+from gevent.server import DatagramServer
 from utils import import_string
 from log import logger
 
@@ -43,25 +44,33 @@ class FlyLogAgent(object):
                 continue
 
             for handler in handler_list:
-                backend = self.backend_dict[handler['backend']]
-                params = handler['params']
+                gevent.spawn(self._process_handler, handler, title, content)
 
-                try:
-                    if not backend.emit(title, content, **params):
-                        logger.error('emit error. message: %s', message)
-                except:
-                    logger.error('exc occur. message: %s', message, exc_info=True)
+    def _process_handler(self, handler, title, content):
+        """
+        为了支持gevent.spawn，所以独立出来
+        """
+        backend = self.backend_dict[handler['backend']]
+        params = handler['params']
+
+        try:
+            if not backend.emit(title, content, **params):
+                logger.error('emit error. handler: %s, title: %s, content: %s',
+                             handler, title, content)
+        except:
+            logger.error('exc occur. handler: %s, title: %s, content: %s',
+                         handler, title, content, exc_info=True)
 
     def run(self, host, port):
-        class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
-            def handle(sub_self):
-                message = sub_self.request[0]
+        class UDPServer(DatagramServer):
+
+            def handle(sub_self, message, address):
                 try:
-                    self.handle_message(message, sub_self.client_address)
+                    self.handle_message(message, address)
                 except:
                     logger.error('exc occur.', exc_info=True)
 
-        server = SocketServer.ThreadingUDPServer((host, port), ThreadedUDPRequestHandler)
+        server = UDPServer((host, port))
 
         try:
             server.serve_forever()
