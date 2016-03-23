@@ -35,7 +35,7 @@ class MailBackend(object):
 
             try:
                 self._sendmail(params['host'], params['port'], params['sender'],
-                               params['receiver_list'], params['title'], params['content'],
+                               receiver_list, title, content,
                                username=params['username'], password=params['password'],
                                use_ssl=params['use_ssl'], use_tls=params['use_tls'],
                                )
