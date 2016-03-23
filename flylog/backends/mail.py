@@ -29,9 +29,6 @@ class MailBackend(object):
 
             # 取出最后一个
             params = sender_list.pop()
-            params['receivers'] = receiver_list
-            params['subject'] = title
-            params['content'] = content
 
             try:
                 self._sendmail(params['host'], params['port'], params['sender'],
