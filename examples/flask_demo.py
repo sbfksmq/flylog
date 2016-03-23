@@ -61,7 +61,7 @@ def configure_logging(app):
 @app.route('/')
 def index():
     app.logger.debug('')
-    app.logger.fatal(u'wo爱你')
+    app.logger.fatal(u'wo试试')
     app.logger.debug('')
 
     return 'ok'
