@@ -42,6 +42,6 @@ ROLE_LIST = {
                 'party_list': ['1'],
                 'agent_id': '',
             }
-        }
+        },
     ]
 }
