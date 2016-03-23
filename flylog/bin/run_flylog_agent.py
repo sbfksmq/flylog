@@ -12,7 +12,6 @@ import logging.config
 
 import sys
 import flylog
-from flylog.config import import_string
 from flylog import FlyLogAgent
 from flylog import constants
 

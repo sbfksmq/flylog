@@ -8,7 +8,7 @@
 
 import json
 import SocketServer
-from config import import_string
+from utils import import_string
 from log import logger
 
 
