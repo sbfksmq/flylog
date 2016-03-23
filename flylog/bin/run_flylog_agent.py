@@ -6,14 +6,13 @@
 """
 
 import imp
-import errno
 import argparse
-import os.path as op
 import logging
 import logging.config
 
 import sys
 import flylog
+from flylog.config import import_string
 from flylog import FlyLogAgent
 from flylog import constants
 
@@ -106,18 +105,6 @@ def configure_logging():
     logging.config.dictConfig(LOGGING)
 
 
-def load_config(filename):
-    d = imp.new_module('config')
-    d.__file__ = filename
-    try:
-        with open(filename) as config_file:
-            exec(compile(config_file.read(), filename, 'exec'), d.__dict__)
-    except IOError as e:
-        e.strerror = 'Unable to load configuration file (%s)' % e.strerror
-        raise
-    return d
-
-
 def run_flylog_agent():
     global debug
 
@@ -125,17 +112,17 @@ def run_flylog_agent():
 
     args = build_parser().parse_args()
 
-    prog = FlyLogAgent(config=load_config(args.config))
+    app = FlyLogAgent(config=import_string(args.config))
 
     # 设置到全局配置里
-    debug = prog.debug = args.debug
+    debug = app.debug = args.debug
 
     logger.info("Running FlyLogAgent on %(host)s:%(port)s, config:%(config)s, debug:%(debug)s" % dict(
         host=args.host, port=args.port, config=args.config, debug=args.debug)
     )
 
     try:
-        prog.run(args.host, args.port)
+        app.run(args.host, args.port)
     except KeyboardInterrupt:
         sys.exit(0)
 
