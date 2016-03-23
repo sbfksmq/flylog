@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import smtplib
 
-BACKEND_LIST = {
+BACKENDS = {
     'mail': {
         'class': 'flylog.backends.mail.MailBackend',
         'init_data': {
@@ -27,7 +27,7 @@ BACKEND_LIST = {
     }
 }
 
-ROLE_LIST = {
+ROLES = {
     'default': [
         {
             'backend': 'mail',

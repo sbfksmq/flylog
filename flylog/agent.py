@@ -24,7 +24,7 @@ class FlyLogAgent(object):
             self.debug = debug
 
         self.backend_dict = dict()
-        for name, backend_conf in self.config.BACKEND_LIST.items():
+        for name, backend_conf in self.config.BACKENDS.items():
             _class = import_string(backend_conf['class'])
             backend = _class(**backend_conf['init_data'])
 
@@ -39,7 +39,7 @@ class FlyLogAgent(object):
         role_list = recv_dict.get('role_list') or ('default',)
 
         for role in role_list:
-            handler_list = self.config.ROLE_LIST.get(role)
+            handler_list = self.config.ROLES.get(role)
             if handler_list is None:
                 continue
 
