@@ -34,7 +34,9 @@ class DingBackend(object):
 
         full_content = '\n'.join([title, content])
 
-        return self._send_message(full_content, agent_id, user_list, party_list)
+        rsp = self._send_message(full_content, agent_id, user_list, party_list)
+
+        assert rsp['errcode'] == 0, rsp
 
     def _get_token(self):
         """
@@ -47,14 +49,14 @@ class DingBackend(object):
         return requests.get(
             url,
             headers=self.HEADERS
-        ).json()['access_token']
+        ).json()
 
     def _send_message(self, content, agent_id, user_list=None, party_list=None):
         """
         发送消息
         """
 
-        access_token = self._get_token()
+        access_token = self._get_token()['access_token']
 
         url = '%s://%s%s' % (self.SCHEMA, self.HOST, self.URL_PATH_SEND_MESSAGE)
 
@@ -73,4 +75,40 @@ class DingBackend(object):
                 access_token=access_token
             ),
             headers=self.HEADERS
-        ).json()['access_token']
+        ).json()
+
+    def _get_department_list(self):
+        """
+        获取部门列表
+        """
+
+        access_token = self._get_token()['access_token']
+
+        url = '%s://%s%s' % (self.SCHEMA, self.HOST, self.URL_PATH_DEPARTMENT_LIST)
+
+        return requests.get(
+            url,
+            params=dict(
+                access_token=access_token
+            ),
+            headers=self.HEADERS
+        ).json()
+
+    def _get_department_user_list(self, department_id):
+        """
+        获取部门成员列表
+        如果要获取顶层公司成员，好像传1就行
+        """
+
+        access_token = self._get_token()['access_token']
+
+        url = '%s://%s%s' % (self.SCHEMA, self.HOST, self.URL_PATH_DEPARTMENT_LIST)
+
+        return requests.get(
+            url,
+            params=dict(
+                access_token=access_token,
+                department_id=department_id,
+            ),
+            headers=self.HEADERS
+        ).json()
