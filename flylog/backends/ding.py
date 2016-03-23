@@ -33,7 +33,7 @@ class DingBackend(object):
         发送
         """
 
-        full_content = '\n'.join([title, content])
+        full_content = '\n\n'.join([title, content])
 
         rsp = self._send_message(full_content, agent_id, user_list, party_list)
 
