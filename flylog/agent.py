@@ -8,42 +8,49 @@
 
 import json
 import SocketServer
-import copy
-import random
+from config import import_string
 from log import logger
 
 
 class FlyLogAgent(object):
     debug = False
 
+    backend_dict = None
+
     def __init__(self, config=None, debug=None):
         self.config = config
         if debug is not None:
             self.debug = debug
 
+        self.backend_dict = dict()
+        for name, backend_conf in self.config['BACKEND_LIST']:
+            _class = import_string(backend_conf['class'])
+            backend = _class(**backend_conf['init_data'])
+
+            self.backend_dict[name] = backend
+
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
 
+        title = u'[%s]Attention!' % recv_dict.get('source')
+        content = recv_dict.get('content')
+
         role_list = recv_dict.get('role_list') or ('default',)
 
-        while sender_list:
-            # 只要还有sender
-            # 保证随机
-            random.shuffle(sender_list)
+        for role in role_list:
+            handler_list = self.config['ROLE_LIST'].get(role)
+            if handler_list is None:
+                continue
 
-            # 取出最后一个
-            mail_values = sender_list.pop()
-            mail_values['receivers'] = receiver_list
-            mail_values['subject'] = u'[%s]Attention!' % recv_dict.get('source')
-            mail_values['content'] = recv_dict.get('content')
+            for handler in handler_list:
+                backend = self.backend_dict[handler['backend']]
+                params = handler['params']
 
-            try:
-                sendmail(**mail_values)
-            except:
-                logger.error("exc occur. mail_values: %s", mail_values, exc_info=True)
-            else:
-                # 如果成功发送
-                break
+                try:
+                    if not backend.emit(title, content, **params):
+                        logger.error('emit error. message: %s', message)
+                except:
+                    logger.error('exc occur. message: %s', message, exc_info=True)
 
     def run(self, host, port):
         class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
