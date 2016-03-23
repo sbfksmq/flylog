@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 
+import json
 import requests
 
 
@@ -69,7 +70,7 @@ class DingBackend(object):
 
         return requests.post(
             url,
-            data=dict(
+            data=json.dumps(dict(
                 touser='|'.join(user_list),
                 toparty='|'.join(party_list),
                 agentid=agent_id,
@@ -77,7 +78,7 @@ class DingBackend(object):
                 text=dict(
                     content=content
                 )
-            ),
+            )),
             params=dict(
                 access_token=access_token
             ),
