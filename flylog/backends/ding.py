@@ -48,6 +48,10 @@ class DingBackend(object):
 
         return requests.get(
             url,
+            params=dict(
+                corpid=self.corp_id,
+                corpsecret=self.corp_secret,
+            ),
             headers=self.HEADERS
         ).json()
 
@@ -60,11 +64,14 @@ class DingBackend(object):
 
         url = '%s://%s%s' % (self.SCHEMA, self.HOST, self.URL_PATH_SEND_MESSAGE)
 
+        user_list = [str(it) for it in user_list or []]
+        party_list = [str(it) for it in party_list or []]
+
         return requests.post(
             url,
             data=dict(
-                touser='|'.join(user_list or []),
-                toparty='|'.join(party_list or []),
+                touser='|'.join(user_list),
+                toparty='|'.join(party_list),
                 agentid=agent_id,
                 msgtype='text',
                 text=dict(

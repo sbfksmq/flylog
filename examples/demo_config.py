@@ -3,7 +3,7 @@ import smtplib
 
 BACKEND_LIST = {
     'mail': {
-        'class': 'flylog.backends.MailBackend',
+        'class': 'flylog.backends.mail.MailBackend',
         'init_data': {
             'host': 'smtp.qq.com',
             'port': smtplib.SMTP_PORT,  # smtplib.SMTP_SSL_PORT
@@ -15,7 +15,7 @@ BACKEND_LIST = {
         },
     },
     'ding': {
-        'class': 'flylog.backends.DingBackend',
+        'class': 'flylog.backends.ding.DingBackend',
         'init_data': {
             'corp_id': '',
             'corp_secret': '',
