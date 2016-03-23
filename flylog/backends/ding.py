@@ -1,5 +1,16 @@
 # -*- coding: utf-8 -*-
 
+"""
+1. 获取 corp_id, corp_secret
+在pc端登录 管理后台 -> 微应用 -> 微应用设置，就可以看到
+
+2. 生成 agent_id
+在 管理后台 -> 微应用 中创建应用，就可以创建一个微应用，拿到agent_id
+
+3. 获取要通知的 user_list/party_list
+调用 _get_department_list 和 _get_department_user_list 就可以获取到相关的数据，用户id即里面的userid
+"""
+
 import json
 import requests
 
@@ -110,7 +121,7 @@ class DingBackend(object):
 
         access_token = self._get_token()['access_token']
 
-        url = '%s://%s%s' % (self.SCHEMA, self.HOST, self.URL_PATH_DEPARTMENT_LIST)
+        url = '%s://%s%s' % (self.SCHEMA, self.HOST, self.URL_PATH_USER_LIST)
 
         return requests.get(
             url,
