@@ -71,3 +71,10 @@ class FlyLogAgent(object):
                     logger.error('exc occur.', exc_info=True)
 
         server = UDPServer((host, port))
+
+        try:
+            server.serve_forever()
+        except KeyboardInterrupt:
+            pass
+        except:
+            logger.error('exc occur.', exc_info=True)
