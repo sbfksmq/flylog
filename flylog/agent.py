@@ -25,18 +25,6 @@ class FlyLogAgent(object):
         recv_dict = json.loads(message)
 
         role_list = recv_dict.get('role_list') or ('default',)
-        receiver_list = []
-        for role, one_receiver_list in self.config.MAIL_RECEIVER_LIST.items():
-            if role in role_list:
-                receiver_list.extend(one_receiver_list)
-
-        receiver_list = list(set(receiver_list))
-
-        if not receiver_list:
-            # 如果没有接收者，就直接返回了
-            return
-
-        sender_list = list(copy.deepcopy(self.config.MAIL_SENDER_LIST))
 
         while sender_list:
             # 只要还有sender

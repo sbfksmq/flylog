@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import logging
+import constants
 
 
-logger = logging.getLogger('flylog')
+logger = logging.getLogger(constants.NAME)

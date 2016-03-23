@@ -1,29 +1,50 @@
 # -*- coding: utf-8 -*-
 
+import copy
+import random
+from ..log import logger
+
 
 class MailBackend(object):
     """
     发送邮件
     """
 
-    def __init__(self, host, port, username, password, sender, use_ssl, use_tls):
-        self.host = host
-        self.port = port
-        self.username = username
-        self.password = password
-        self.sender = sender
-        self.use_ssl = use_ssl
-        self.use_tls = use_tls
+    def __init__(self, sender_list):
+        """
+        初始化
+        sender_list可以保证只要发送失败就尝试下一个
+        """
+        self.sender_list = sender_list
 
     def emit(self, title, content, receiver_list):
         """
         发送
         """
 
-        self._sendmail(self.host, self.port, self.sender, receiver_list, title, content,
-                       username=self.username, password=self.password,
-                       use_ssl=self.use_ssl, use_tls=self.use_tls
-                       )
+        sender_list = copy.deepcopy(self.sender_list)
+
+        while sender_list:
+            random.shuffle(sender_list)
+
+            # 取出最后一个
+            params = sender_list.pop()
+            params['receivers'] = receiver_list
+            params['subject'] = title
+            params['content'] = content
+
+            try:
+                self._sendmail(params['host'], params['port'], params['sender'],
+                               params['receiver_list'], params['title'], params['content'],
+                               username=params['username'], password=params['password'],
+                               use_ssl=params['use_ssl'], use_tls=params['use_tls'],
+                               )
+                return
+            except:
+                logger.error('exc occur. params: %s', params, exc_info=True)
+        else:
+            # 就是循环完了，也没发送成功
+            raise Exception('mail send fail. title: %s, content: %s' % (title, content))
 
     def _sendmail(self, host, port, sender, receiver_list, subject, content,
                   content_type='plain', encoding='utf-8',
