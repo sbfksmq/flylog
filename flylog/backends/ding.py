@@ -37,7 +37,7 @@ class DingBackend(object):
 
         rsp = self._send_message(full_content, agent_id, user_list, party_list)
 
-        assert rsp['errcode'] == 0, rsp
+        return rsp['errcode'] == 0
 
     def _get_token(self):
         """

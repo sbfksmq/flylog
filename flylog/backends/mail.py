@@ -39,12 +39,12 @@ class MailBackend(object):
                                username=params['username'], password=params['password'],
                                use_ssl=params['use_ssl'], use_tls=params['use_tls'],
                                )
-                return
+                return True
             except:
                 logger.error('exc occur. params: %s', params, exc_info=True)
         else:
             # 就是循环完了，也没发送成功
-            raise Exception('mail send fail. title: %s, content: %s' % (title, content))
+            return False
 
     def _sendmail(self, host, port, sender, receiver_list, subject, content,
                   content_type='plain', encoding='utf-8',
