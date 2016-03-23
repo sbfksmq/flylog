@@ -105,6 +105,18 @@ def configure_logging():
     logging.config.dictConfig(LOGGING)
 
 
+def load_config(filename):
+    d = imp.new_module('config')
+    d.__file__ = filename
+    try:
+        with open(filename) as config_file:
+            exec(compile(config_file.read(), filename, 'exec'), d.__dict__)
+    except IOError as e:
+        e.strerror = 'Unable to load configuration file (%s)' % e.strerror
+        raise
+    return d
+
+
 def run_flylog_agent():
     global debug
 
@@ -112,7 +124,7 @@ def run_flylog_agent():
 
     args = build_parser().parse_args()
 
-    app = FlyLogAgent(config=import_string(args.config))
+    app = FlyLogAgent(config=load_config(args.config))
 
     # 设置到全局配置里
     debug = app.debug = args.debug
