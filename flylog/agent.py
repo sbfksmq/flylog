@@ -4,11 +4,13 @@
 """
 用来作为接受log传递的agent
 通过udp通道。
+
+不使用 gevent，因为测试了 gevent 对 smtplib 似乎没法异步，还是会阻塞
 """
 
 import json
-import gevent
-from gevent.server import DatagramServer
+import SocketServer
+from thread import start_new_thread
 from collections import defaultdict
 from utils import import_string
 from log import logger
@@ -57,7 +59,7 @@ class FlyLogAgent(object):
                 )
 
         for backend_name, params in merged_backends.items():
-            gevent.spawn(self._process_backend_emit, backend_name, params, title, content)
+            start_new_thread(self._process_backend_emit, (backend_name, params, title, content))
 
     def _merge_backend_params(self, params1, params2):
         """
@@ -77,7 +79,7 @@ class FlyLogAgent(object):
 
     def _process_backend_emit(self, backend_name, params, title, content):
         """
-        为了支持gevent.spawn，所以独立出来
+        为了支持单独线程，所以独立出来
         """
         backend = self.backend_dict[backend_name]
 
@@ -90,15 +92,15 @@ class FlyLogAgent(object):
                          backend_name, params, title, content, exc_info=True)
 
     def run(self, host, port):
-        class UDPServer(DatagramServer):
-
-            def handle(sub_self, message, address):
+        class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
+            def handle(sub_self):
+                message = sub_self.request[0]
                 try:
-                    self.handle_message(message, address)
+                    self.handle_message(message, sub_self.client_address)
                 except:
                     logger.error('exc occur.', exc_info=True)
 
-        server = UDPServer((host, port))
+        server = SocketServer.ThreadingUDPServer((host, port), ThreadedUDPRequestHandler)
 
         try:
             server.serve_forever()
