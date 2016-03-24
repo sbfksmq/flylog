@@ -12,8 +12,7 @@ import logging.config
 import sys
 
 import flylog
-from flylog import Agent
-from flylog.share import constants
+from flylog import Agent, constants
 
 
 # 日志

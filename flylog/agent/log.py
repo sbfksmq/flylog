@@ -2,6 +2,6 @@
 
 import logging
 
-from ..share import constants
+from .. import constants
 
 logger = logging.getLogger(constants.AGENT_LOGGER_NAME)

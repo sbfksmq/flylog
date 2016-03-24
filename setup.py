@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name="flylog",
-    version='0.1.37',
+    version='0.1.38',
     zip_safe=False,
     platforms='any',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
