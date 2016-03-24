@@ -39,7 +39,8 @@ class FlyLogAgent(object):
 
         role_list = recv_dict.get('role_list') or ('default',)
 
-        merged_backends = defaultdict(list)
+        # backend_name -> params
+        merged_backends = defaultdict(dict)
 
         for role in role_list:
             handler_list = self.config.ROLES.get(role)
