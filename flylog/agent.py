@@ -16,7 +16,7 @@ from utils import import_string
 from log import logger
 
 
-class FlyLogAgent(object):
+class Agent(object):
     debug = False
 
     backend_dict = None

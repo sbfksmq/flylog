@@ -7,7 +7,7 @@ from logging.handlers import DatagramHandler
 from . import constants
 
 
-class FlyLogHandler(DatagramHandler):
+class LogHandler(DatagramHandler):
     source = None
     source_ip = None
     role_list = None

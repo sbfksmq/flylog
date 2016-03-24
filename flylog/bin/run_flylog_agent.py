@@ -12,7 +12,7 @@ import logging.config
 
 import sys
 import flylog
-from flylog import FlyLogAgent
+from flylog import Agent
 from flylog import constants
 
 
@@ -123,12 +123,12 @@ def run_flylog_agent():
 
     args = build_parser().parse_args()
 
-    app = FlyLogAgent(config=load_config(args.config))
+    app = Agent(config=load_config(args.config))
 
     # 设置到全局配置里
     debug = app.debug = args.debug
 
-    logger.info("Running FlyLogAgent on %(host)s:%(port)s, config:%(config)s, debug:%(debug)s" % dict(
+    logger.info("Running on %(host)s:%(port)s, config:%(config)s, debug:%(debug)s" % dict(
         host=args.host, port=args.port, config=args.config, debug=args.debug)
     )
 

@@ -2,5 +2,8 @@
 
 __version__ = '0.1.35'
 
-from .agent import FlyLogAgent
-from .handler import FlyLogHandler
+from .agent import Agent
+from .log_handler import LogHandler
+
+# 向下兼容
+FlyLogHandler = LogHandler
