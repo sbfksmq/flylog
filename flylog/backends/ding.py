@@ -65,7 +65,8 @@ class DingBackend(object):
                 corpid=self.corp_id,
                 corpsecret=self.corp_secret,
             ),
-            headers=self.HEADERS
+            headers=self.HEADERS,
+            verify=False,
         ).json()
 
     def _send_message(self, content, agent_id, user_list=None, party_list=None):
@@ -94,7 +95,8 @@ class DingBackend(object):
             params=dict(
                 access_token=access_token
             ),
-            headers=self.HEADERS
+            headers=self.HEADERS,
+            verify=False,
         ).json()
 
     def _get_department_list(self):
@@ -111,7 +113,8 @@ class DingBackend(object):
             params=dict(
                 access_token=access_token
             ),
-            headers=self.HEADERS
+            headers=self.HEADERS,
+            verify=False,
         ).json()
 
     def _get_department_user_list(self, department_id):
@@ -130,5 +133,6 @@ class DingBackend(object):
                 access_token=access_token,
                 department_id=department_id,
             ),
-            headers=self.HEADERS
+            headers=self.HEADERS,
+            verify=False,
         ).json()
