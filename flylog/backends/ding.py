@@ -35,18 +35,19 @@ class DingBackend(object):
     # 获取部门成员列表
     URL_PATH_USER_LIST = '/user/list'
 
-    def __init__(self, corp_id, corp_secret):
+    def __init__(self, corp_id, corp_secret, agent_id):
         self.corp_id = corp_id
         self.corp_secret = corp_secret
+        self.agent_id = agent_id
 
-    def emit(self, title, content, agent_id, user_list=None, party_list=None):
+    def emit(self, title, content, user_list=None, party_list=None):
         """
         发送
         """
 
         full_content = '\n\n'.join([title, content])
 
-        rsp = self._send_message(full_content, agent_id, user_list, party_list)
+        rsp = self._send_message(full_content, self.agent_id, user_list, party_list)
 
         return rsp['errcode'] == 0
 

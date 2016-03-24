@@ -23,6 +23,7 @@ BACKENDS = {
         'init_data': {
             'corp_id': '',
             'corp_secret': '',
+            'agent_id': '',
         }
     }
 }
@@ -40,7 +41,6 @@ ROLES = {
             'params': {
                 'user_list': ['1'],
                 'party_list': ['1'],
-                'agent_id': '',
             }
         },
     ]
