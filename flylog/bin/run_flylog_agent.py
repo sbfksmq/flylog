@@ -9,11 +9,11 @@ import imp
 import argparse
 import logging
 import logging.config
-
 import sys
+
 import flylog
 from flylog import Agent
-from flylog import constants
+from flylog.share import constants
 
 
 # 日志

@@ -4,7 +4,7 @@ import json
 import socket
 from logging.handlers import DatagramHandler
 
-from . import constants
+from flylog.share import constants
 
 
 class LogHandler(DatagramHandler):

@@ -1,9 +1,6 @@
 # -*- coding: utf-8 -*-
 
 import sys
-import imp
-import os
-import errno
 
 PY2 = sys.version_info[0] == 2
 

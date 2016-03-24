@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '0.1.36'
+__version__ = '0.1.37'
 
-from .agent import Agent
-from .log_handler import LogHandler
+from .api.log_handler import LogHandler
+from .agent.agent import Agent
 
 # 向下兼容
 FlyLogHandler = LogHandler

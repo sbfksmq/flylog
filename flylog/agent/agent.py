@@ -12,8 +12,9 @@ import json
 import SocketServer
 from thread import start_new_thread
 from collections import defaultdict
-from utils import import_string
-from log import logger
+
+from .utils import import_string
+from .log import logger
 
 
 class Agent(object):
