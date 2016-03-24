@@ -13,6 +13,7 @@ import sys
 
 import flylog
 from flylog import Agent, constants
+from flylog.agent.log import logger
 
 
 # 日志
@@ -76,7 +77,7 @@ LOGGING = {
     },
 
     'loggers': {
-        'flylog': {
+        flylog.constants.AGENT_LOGGER_NAME: {
             'handlers': ['console', 'rotating_file'],
             'level': 'DEBUG',
             'propagate': False
@@ -85,7 +86,6 @@ LOGGING = {
 }
 
 
-logger = logging.getLogger('flylog')
 debug = False
 
 
