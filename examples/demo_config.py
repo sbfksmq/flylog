@@ -3,7 +3,7 @@ import smtplib
 
 BACKENDS = {
     'mail': {
-        'class': 'flylog.backends.mail.MailBackend',
+        'class': 'flylog.agent.backends.mail.MailBackend',
         'init_data': {
             'sender_list': [
                 {
@@ -19,7 +19,7 @@ BACKENDS = {
         },
     },
     'ding': {
-        'class': 'flylog.backends.ding.DingBackend',
+        'class': 'flylog.agent.backends.ding.DingBackend',
         'init_data': {
             'corp_id': '',
             'corp_secret': '',
