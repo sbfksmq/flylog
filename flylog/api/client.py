@@ -21,7 +21,7 @@ class Client(object):
         发送
         """
         s = json.dumps(dict(source=source, role_list=role_list, content=content))
-        self.sock.send(s, (self.host, self.port))
+        self.sock.sendto(s, (self.host, self.port))
 
     def _create_socket(self):
         """
