@@ -2,6 +2,7 @@
 
 import socket
 import json
+from .. import constants
 
 
 class Client(object):
@@ -9,8 +10,8 @@ class Client(object):
     sock = None
 
     def __init__(self, host=None, port=None):
-        self.host = host
-        self.port = port
+        self.host = host or constants.AGENT_HOST
+        self.port = port or constants.AGENT_PORT
 
         # 一开始就创建好sock
         self._create_socket()
