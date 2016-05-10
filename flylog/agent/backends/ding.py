@@ -8,7 +8,8 @@
 在 管理后台 -> 微应用 中创建应用，就可以创建一个微应用，拿到agent_id
 
 3. 获取要通知的 user_list/party_list
-调用 _get_department_list 和 _get_department_user_list 就可以获取到相关的数据，用户id即里面的userid
+    a. 直接到网站管理后台，点击通讯录，工号即为userid；在点击左侧每个部门的时候，浏览器url中的deptId即为部门ID
+    b. 调用 _get_department_list 和 _get_department_user_list 就可以获取到相关的数据，用户id即里面的userid
 """
 
 import json
