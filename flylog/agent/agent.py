@@ -18,14 +18,10 @@ from .log import logger
 
 
 class Agent(object):
-    debug = False
-
     backend_dict = None
 
-    def __init__(self, config=None, debug=None):
+    def __init__(self, config=None):
         self.config = config
-        if debug is not None:
-            self.debug = debug
 
         self.backend_dict = dict()
         for name, backend_conf in self.config.BACKENDS.items():
