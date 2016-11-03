@@ -50,6 +50,7 @@ ROLES = {
 # for logging
 
 import logging
+import logging.config
 
 LOG_FORMAT = '\n'.join((
     '/' + '-' * 80,
@@ -58,8 +59,31 @@ LOG_FORMAT = '\n'.join((
     '-' * 80 + '/',
 ))
 
-logger = logging.getLogger('flylog')
-handler = logging.StreamHandler()
-handler.setFormatter(logging.Formatter(LOG_FORMAT))
-logger.addHandler(handler)
-logger.setLevel(logging.DEBUG)
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': True,
+
+    'formatters': {
+        'standard': {
+            'format': LOG_FORMAT,
+        },
+    },
+
+    'handlers': {
+        'console': {
+            'level': 'DEBUG',
+            'class': 'logging.StreamHandler',
+            'formatter': 'standard',
+        },
+    },
+
+    'loggers': {
+        'maple_guard': {
+            'handlers': ['console'],
+            'level': 'ERROR',
+            'propagate': False
+        },
+    }
+}
+
+logging.config.dictConfig(LOGGING)
