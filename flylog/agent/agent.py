@@ -8,6 +8,7 @@
 不使用 gevent，因为测试了 gevent 对 smtplib 似乎没法异步，还是会阻塞
 """
 
+import logging.config
 import json
 import SocketServer
 from thread import start_new_thread
@@ -22,6 +23,8 @@ class Agent(object):
 
     def __init__(self, config=None):
         self.config = config
+        if hasattr(config, 'LOGGING'):
+            logging.config.dictConfig(config.LOGGING)
 
         self.backend_dict = dict()
         for name, backend_conf in self.config.BACKENDS.items():

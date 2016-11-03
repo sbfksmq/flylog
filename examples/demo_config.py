@@ -47,11 +47,6 @@ ROLES = {
 }
 
 
-# for logging
-
-import logging
-import logging.config
-
 LOG_FORMAT = '\n'.join((
     '/' + '-' * 80,
     '[%(levelname)s][%(asctime)s][%(process)d:%(thread)d][%(filename)s:%(lineno)d %(funcName)s]:',
@@ -85,5 +80,3 @@ LOGGING = {
         },
     }
 }
-
-logging.config.dictConfig(LOGGING)
