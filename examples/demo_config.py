@@ -78,7 +78,7 @@ LOGGING = {
     },
 
     'loggers': {
-        'maple_guard': {
+        'flylog': {
             'handlers': ['console'],
             'level': 'ERROR',
             'propagate': False
