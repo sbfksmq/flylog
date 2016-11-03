@@ -11,7 +11,6 @@ import sys
 
 import flylog
 from flylog import Agent, constants
-from flylog.agent.log import logger
 
 
 def build_parser():
@@ -40,10 +39,6 @@ def run_flylog_agent():
     args = build_parser().parse_args()
 
     app = Agent(config=load_config(args.config))
-
-    logger.info("Running on %(host)s:%(port)s, config:%(config)s" % dict(
-        host=args.host, port=args.port, config=args.config)
-    )
 
     try:
         app.run(args.host, args.port)
