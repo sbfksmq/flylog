@@ -51,6 +51,12 @@ ROLES = {
                 'party_list': ['1'],
             }
         },
+        {
+            'backend': 'sendcloud',
+            'params': {
+                'receiver_list': ['x@qq.com'],
+            }
+        },
     ]
 }
 
