@@ -25,7 +25,15 @@ BACKENDS = {
             'corp_secret': '',
             'agent_id': '',
         }
-    }
+    },
+    'sendcloud': {
+        'class': 'flylog.agent.backends.sendcloud.SendCloudBackend',
+        'init_data': {
+            'api_user': '',
+            'api_key': '',
+            'sender': '',
+        }
+    },
 }
 
 ROLES = {
