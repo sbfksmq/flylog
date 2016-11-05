@@ -31,7 +31,7 @@ class SendCloudBackend(object):
             'from': self.sender,
             'to': ';'.join(receiver_list),
             'subject': title,
-            'html': content,
+            'plain': content,
         }
 
         try:
