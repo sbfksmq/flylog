@@ -45,8 +45,4 @@ class LogHandler(DatagramHandler):
             self.handleError(record)
 
     def makeSocket(self):
-        s = DatagramHandler.makeSocket(self)
-        # 非阻塞，sendto在缓冲区满的时候也是可能block的
-        if s:
-            s.setblocking(0)
-        return s
+        return DatagramHandler.makeSocket(self)

@@ -45,11 +45,3 @@ class Client(object):
             pass
         finally:
             self.sock = None
-
-    def setblocking(self, blocking):
-        """
-        是否阻塞
-        因为sendto在缓冲区满的时候也是可能block的
-        """
-
-        self.sock.setblocking(blocking)
