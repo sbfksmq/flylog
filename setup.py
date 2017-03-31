@@ -7,7 +7,7 @@ setup(
     platforms='any',
     packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
     install_requires=['requests'],
-    scripts=['flylog/bin/run_flylog_agent.py'],
+    scripts=['flylog/bin/run_flylog.py'],
     url="https://github.com/dantezhu/flylog",
     license="BSD",
     author="dantezhu",
