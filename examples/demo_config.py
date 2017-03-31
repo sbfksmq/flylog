@@ -3,7 +3,7 @@ import smtplib
 
 BACKENDS = {
     'mail': {
-        'class': 'flylog.agent.backends.mail.MailBackend',
+        'class': 'flylog.server.backends.mail.MailBackend',
         'init_data': {
             'sender_list': [
                 {
@@ -19,7 +19,7 @@ BACKENDS = {
         },
     },
     'ding': {
-        'class': 'flylog.agent.backends.ding.DingBackend',
+        'class': 'flylog.server.backends.ding.DingBackend',
         'init_data': {
             'corp_id': '',
             'corp_secret': '',
@@ -27,7 +27,7 @@ BACKENDS = {
         }
     },
     'sendcloud': {
-        'class': 'flylog.agent.backends.sendcloud.SendCloudBackend',
+        'class': 'flylog.server.backends.sendcloud.SendCloudBackend',
         'init_data': {
             'api_user': '',
             'api_key': '',

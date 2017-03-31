@@ -10,8 +10,8 @@ class Client(object):
     sock = None
 
     def __init__(self, host=None, port=None):
-        self.host = host or constants.AGENT_HOST
-        self.port = port or constants.AGENT_PORT
+        self.host = host or constants.HOST
+        self.port = port or constants.PORT
 
         # 一开始就创建好sock
         self._create_socket()

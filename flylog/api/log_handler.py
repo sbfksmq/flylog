@@ -14,8 +14,8 @@ class LogHandler(DatagramHandler):
 
     def __init__(self, host=None, port=None, source=None, role_list=None):
         DatagramHandler.__init__(self,
-                                 host or constants.AGENT_HOST,
-                                 port or constants.AGENT_PORT)
+                                 host or constants.HOST,
+                                 port or constants.PORT)
 
         # source_ip
         cls = self.__class__

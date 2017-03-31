@@ -10,13 +10,13 @@ import argparse
 import sys
 
 import flylog
-from flylog import Agent, constants
+from flylog import Server, constants
 
 
 def build_parser():
     parser = argparse.ArgumentParser()
-    parser.add_argument('-t', '--host', default=constants.AGENT_HOST, help='bind host', action='store')
-    parser.add_argument('-p', '--port', default=constants.AGENT_PORT, type=int, help='bind port', action='store')
+    parser.add_argument('-t', '--host', default=constants.HOST, help='bind host', action='store')
+    parser.add_argument('-p', '--port', default=constants.PORT, type=int, help='bind port', action='store')
     parser.add_argument('-c', '--config', help='config file', action='store', required=True)
     parser.add_argument('-v', '--version', action='version', version='%s' % flylog.__version__)
     return parser
@@ -34,11 +34,11 @@ def load_config(filename):
     return d
 
 
-def run_flylog_agent():
+def main():
 
     args = build_parser().parse_args()
 
-    app = Agent(config=load_config(args.config))
+    app = Server(config=load_config(args.config))
 
     try:
         app.run(args.host, args.port)
@@ -46,4 +46,4 @@ def run_flylog_agent():
         sys.exit(0)
 
 if __name__ == '__main__':
-    run_flylog_agent()
+    main()

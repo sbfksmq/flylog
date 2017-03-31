@@ -18,7 +18,7 @@ from .utils import import_string
 from .log import logger
 
 
-class Agent(object):
+class Server(object):
     backend_dict = None
 
     def __init__(self, config=None):

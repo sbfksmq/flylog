@@ -16,9 +16,9 @@ make log fly to mail or other.
 
 ### 二. 使用
 
-1. 启动agent
+1. 启动server
 
-        run_flylog_agent.py -c config.py
+        run_flylog.py -c config.py
 
     具体配置参考 examples/demo_config.py
 
