@@ -18,9 +18,6 @@ LOGGING = {
         },
     },
 
-    'filters': {
-    },
-
     'handlers': {
         'flylog': {
             'level': 'CRITICAL',
