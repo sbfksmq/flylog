@@ -39,6 +39,8 @@ class Server(object):
         title = u'[%s]Attention!' % recv_dict.get('source')
         content = recv_dict.get('content')
 
+        logger.info('%s\n%s', title, content)
+
         role_list = recv_dict.get('role_list') or ('default',)
 
         # backend_name -> params
