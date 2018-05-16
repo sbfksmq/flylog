@@ -8,12 +8,13 @@
 不使用 gevent，因为测试了 gevent 对 smtplib 似乎没法异步，还是会阻塞
 """
 
+from __future__ import unicode_literals
+
 import logging.config
 import json
-import SocketServer
-from thread import start_new_thread
 from collections import defaultdict
 
+from .six import socketserver, _thread
 from .utils import import_string
 from .log import logger
 
@@ -36,7 +37,7 @@ class Server(object):
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
 
-        title = u'[%s]Attention!' % recv_dict.get('source')
+        title = '[%s]Attention!' % recv_dict.get('source')
         content = recv_dict.get('content')
 
         logger.info('%s\n%s', title, content)
@@ -61,7 +62,7 @@ class Server(object):
                 )
 
         for backend_name, params in merged_backends.items():
-            start_new_thread(self._process_backend_emit, (backend_name, params, title, content))
+            _thread.start_new_thread(self._process_backend_emit, (backend_name, params, title, content))
 
     def _merge_backend_params(self, params1, params2):
         """
@@ -94,7 +95,7 @@ class Server(object):
                          backend_name, params, title, content, exc_info=True)
 
     def run(self, host, port):
-        class ThreadedUDPRequestHandler(SocketServer.BaseRequestHandler):
+        class ThreadedUDPRequestHandler(socketserver.BaseRequestHandler):
             def handle(sub_self):
                 message = sub_self.request[0]
                 try:
@@ -102,7 +103,7 @@ class Server(object):
                 except:
                     logger.error('exc occur. message: %r, address: %s', message, sub_self.client_address, exc_info=True)
 
-        class MyUDPServer(SocketServer.ThreadingUDPServer):
+        class MyUDPServer(socketserver.ThreadingUDPServer):
             daemon_threads = True
             allow_reuse_address = True
 
