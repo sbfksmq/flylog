@@ -14,6 +14,9 @@ make log fly to mail or other.
 * 钉钉企业消息
 
 
+python2, python3 supported
+
+
 ### 二. 使用
 
 1. 启动server
