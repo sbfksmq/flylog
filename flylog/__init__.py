@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 
-__version__ = '0.1.73'
+__version__ = '0.2.1'
 
 from .api.log_handler import LogHandler
 from .api.client import Client
