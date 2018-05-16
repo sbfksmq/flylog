@@ -21,6 +21,9 @@ class Client(object):
         发送
         """
         s = json.dumps(dict(source=source, role_list=role_list, content=content))
+        # python3的json.dumps返回的是str
+        if not isinstance(s, bytes):
+            s = s.encode('utf-8')
         self.sock.sendto(s, (self.host, self.port))
 
     def _create_socket(self):
