@@ -1,13 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import sys
-
-PY2 = sys.version_info[0] == 2
-
-if not PY2:
-    string_types = (str, )
-else:
-    string_types = (str, unicode)
+from .six import reraise
 
 
 def import_string(import_name, silent=False):
@@ -52,4 +46,4 @@ def import_string(import_name, silent=False):
     except ImportError as e:
         if not silent:
             t, v, tb = sys.exc_info()
-            raise t, v, tb
+            reraise(t, v, tb)

@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
+
+from __future__ import unicode_literals
+
 from flask import Flask
 
 LOG_FORMAT = '\n'.join((
@@ -23,7 +26,7 @@ LOGGING = {
             'level': 'CRITICAL',
             'class': 'flylog.LogHandler',
             'formatter': 'standard',
-            'source': u'demo测试',
+            'source': 'demo测试',
             'role_list': ['default', 'pm'],
         },
         'console': {
@@ -58,7 +61,7 @@ def configure_logging(app):
 @app.route('/')
 def index():
     app.logger.debug('')
-    app.logger.fatal(u'wo试试')
+    app.logger.fatal('wo试试')
     app.logger.debug('')
 
     return 'ok'
