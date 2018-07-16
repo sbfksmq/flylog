@@ -5,7 +5,7 @@
 启动 flylog_agent
 """
 
-import imp
+import types
 import argparse
 import sys
 
@@ -23,7 +23,7 @@ def build_parser():
 
 
 def load_config(filename):
-    d = imp.new_module('config')
+    d = types.ModuleType('config')
     d.__file__ = filename
     try:
         with open(filename) as config_file:
