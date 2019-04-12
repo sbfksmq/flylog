@@ -38,6 +38,9 @@ class LogHandler(DatagramHandler):
         content = self.format(record)
         try:
             s = json.dumps(dict(source=source, role_list=self.role_list, content=content))
+            # python3的json.dumps返回的是str
+            if not isinstance(s, bytes):
+                s = s.encode('utf-8')
             self.send(s)
         except (KeyboardInterrupt, SystemExit):
             raise
