@@ -137,3 +137,21 @@ class DingBackend(object):
             headers=self.HEADERS,
             verify=False,
         ).json()
+
+
+class DingRobot(object):
+    """
+    钉钉创建机器人: https://ding-doc.dingtalk.com/doc#/serverapi2/elzz1p
+
+    Q: 如何控制不同的服务的报警放送给不同的机器人?
+    A: 通过创建机器人的ip限制, 限制最多可设置10个, 设置了限制对应ip上的服务只会发给对应创建机器人,对应的机器人有对应的web_hook
+    """
+    def __init__(self, web_hook_url):
+        self.web_hook_url = web_hook_url
+
+    def emit(self, title, content):
+        full_content = '\n\n'.join([title, content])
+        data = {"msgtype": "text", "text": {"content": full_content}}
+        headers = {"Content-Type": "application/json"}
+        rsp = requests.post(self.web_hook_url, data=str(data), headers=headers).json()
+        return rsp['errcode'] == 0
