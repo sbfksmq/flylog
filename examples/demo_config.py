@@ -18,6 +18,7 @@ BACKENDS = {
             ]
         },
     },
+
     'ding': {
         'class': 'flylog.server.backends.ding.DingBackend',
         'init_data': {
@@ -26,6 +27,14 @@ BACKENDS = {
             'agent_id': '',
         }
     },
+
+    'robot': {
+        'class': 'flylog.server.backends.robot.DingRobot',
+        'init_data': {
+            'web_hook_list': [],
+        }
+    },
+
     'sendcloud': {
         'class': 'flylog.server.backends.sendcloud.SendCloudBackend',
         'init_data': {
