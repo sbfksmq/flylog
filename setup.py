@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name="flylog",
+    name="flylog_ding_robot",
     version='0.0.1',
     zip_safe=False,
     platforms='any',
