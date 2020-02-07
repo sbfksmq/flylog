@@ -43,6 +43,7 @@ class Server(object):
         logger.info('%s\n%s', title, content)
 
         role_list = recv_dict.get('role_list') or ('default',)
+        logger.info('trace ding robot role_list: %s, recv_dict: %s, roles: %s', role_list, recv_dict, self.config.ROLES)
 
         # backend_name -> params
         merged_backends = defaultdict(dict)
@@ -52,6 +53,7 @@ class Server(object):
             if handler_list is None:
                 continue
 
+            logger.info('trace ding robot handler_list: %s', handler_list)
             for handler in handler_list:
                 backend_name = handler['backend']
                 params = handler['params']
@@ -61,6 +63,7 @@ class Server(object):
                     params
                 )
 
+        logger.info('trace ding robot merged_backends: %s', merged_backends)
         for backend_name, params in merged_backends.items():
             _thread.start_new_thread(self._process_backend_emit, (backend_name, params, title, content))
 
@@ -86,6 +89,7 @@ class Server(object):
         """
         backend = self.backend_dict[backend_name]
 
+        logger.info('trace ding robot backend_name: %s, backend: %s', backend_name, backend)
         try:
             if not backend.emit(title, content, **params):
                 logger.error('emit error. backend: %s, params: %s, title: %s, content: %s',
