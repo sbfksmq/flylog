@@ -19,4 +19,4 @@ class DingRobot(object):
             rsp = requests.post(web_hook, data=data, headers=headers).json()
             res_list.append(rsp['errcode'] == 0)
 
-        return False in res_list
+        return False not in res_list
