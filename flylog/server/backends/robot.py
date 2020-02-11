@@ -14,7 +14,9 @@ class DingRobot(object):
         headers = {'Content-Type': 'application/json'}
         data = json.dumps({"msgtype": "text", "text": {"content": full_content}})
 
+        res_list = []
         for web_hook in self.web_hook_list:
-            requests.post(web_hook, data=data, headers=headers)
+            rsp = requests.post(web_hook, data=data, headers=headers).json()
+            res_list.append(rsp['errcode'] == 0)
 
-        return True
+        return False in res_list
