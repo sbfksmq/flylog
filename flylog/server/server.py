@@ -34,10 +34,18 @@ class Server(object):
 
             self.backend_dict[name] = backend
 
+    @staticmethod
+    def is_exist_filter_keyword(source, keyword_filter_list):
+        for keyword in keyword_filter_list:
+            if keyword in source:
+                return True
+        return False
+
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
 
-        title = '[%s]Attention!' % recv_dict.get('source')
+        source = recv_dict.get('source')
+        title = '[%s]Attention!' % source
         content = recv_dict.get('content')
 
         logger.info('%s\n%s', title, content)
@@ -55,6 +63,8 @@ class Server(object):
             for handler in handler_list:
                 backend_name = handler['backend']
                 params = handler['params']
+                if self.is_exist_filter_keyword(source, handler['keyword_filter_list']):
+                    continue
 
                 merged_backends[backend_name] = self._merge_backend_params(
                     merged_backends[backend_name],

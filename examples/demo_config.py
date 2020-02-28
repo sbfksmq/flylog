@@ -51,20 +51,23 @@ ROLES = {
             'backend': 'mail',
             'params': {
                 'receiver_list': ['x@qq.com'],
-            }
+            },
+            'keyword_filter_list': [],
         },
         {
             'backend': 'ding',
             'params': {
                 'user_list': ['1'],
                 'party_list': ['1'],
-            }
+            },
+            'keyword_filter_list': [],
         },
         {
             'backend': 'sendcloud',
             'params': {
                 'receiver_list': ['x@qq.com'],
-            }
+            },
+            'keyword_filter_list': [],
         },
     ]
 }
