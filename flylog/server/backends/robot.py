@@ -13,7 +13,7 @@ class DingRobot(object):
     """
     todo 
     1 redis 缓存类
-    2 filter接口 以文件名 行号为key 日志内容的md5值为value 存储 (是否要每天清零)
+    2 filter接口 以文件名 行号,日志内容的md5值为key, 发送次数为value 存储 (是否要每天清零)
     3 正则表达式的匹配截取 ：文件名, 行号，日志内容 
     
     [g_p_h_mtt@iZgw8izpv8a5yktv7kz6v9Z]Attention!
@@ -28,6 +28,14 @@ class DingRobot(object):
     """
     def __init__(self, web_hook_list):
         self.web_hook_list = web_hook_list
+
+    def _is_reached_message_send_limit(self, content):
+        """
+        是否达到发送上限
+        :param content:
+        :return:
+        """
+
 
     def emit(self, title, content):
 
