@@ -2,12 +2,30 @@
 import json
 import requests
 
+from ..redis_helper import redis_default
+
 
 class DingRobot(object):
 
     ERROR_CODE_KEYWORD = 310000
     RET_OK = 0
 
+    """
+    todo 
+    1 redis 缓存类
+    2 filter接口 以文件名 行号为key 日志内容的md5值为value 存储 (是否要每天清零)
+    3 正则表达式的匹配截取 ：文件名, 行号，日志内容 
+    
+    [g_p_h_mtt@iZgw8izpv8a5yktv7kz6v9Z]Attention!
+    /--------------------------------------------------------------------------------
+    [CRITICAL][2020-03-05 21:28:39,563][18620:139919643383552][mtt_hall.py:47 user_enter]:
+    mtt user enter patch, empty event id, uid: 27562, req: event_id: 0
+    desk_id: 2972264
+    view_openid: "27578"
+    group_id: 0
+
+    --------------------------------------------------------------------------------/
+    """
     def __init__(self, web_hook_list):
         self.web_hook_list = web_hook_list
 
