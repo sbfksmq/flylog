@@ -234,3 +234,36 @@ class HelperRedis(object):
 # 默认redis实例
 REDIS_DB_APP_DEFAULT = 'app_default'
 redis_default = HelperRedis(REDIS_DB_APP_DEFAULT)
+
+
+class FlylogMsgCache(object):
+
+    rds = redis_default
+    expire_time = 60 * 60 * 24
+    REDIS_KEY_FLYLOG_MSG = 'redis_key_flylog_msg_{filename}_{line_no}_{msg_md}'
+
+    def __init__(self, filename, line_no, msg_md):
+        self.redis_key = self.REDIS_KEY_FLYLOG_MSG.format(filename=filename, line_no=line_no, msg_md=msg_md)
+
+    def _set_record(self, value):
+        return self.rds.setex(self.redis_key, self.expire_time, value)
+
+    def _get_record(self):
+        return self.rds.get(self.redis_key)
+
+    def incr(self):
+        times = self._get_record()
+        times =
+        if times:
+            times = int(times)
+            times += 1
+            self._set_record(times)
+        else:
+            times = 1
+            self._set_record(1)
+
+
+
+
+
+

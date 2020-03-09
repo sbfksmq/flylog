@@ -37,6 +37,7 @@ class DingRobot(object):
         """
 
 
+
     def emit(self, title, content):
 
         full_content = '\n\n'.join([title, content])
