@@ -1,8 +1,10 @@
 # -*- coding: utf-8 -*-
 import json
 import requests
+import re
 
-from ..redis_helper import redis_default
+from ..log import logger
+from ..redis_helper import FlylogMsgCache
 
 
 class DingRobot(object):
@@ -26,23 +28,47 @@ class DingRobot(object):
 
     --------------------------------------------------------------------------------/
     """
-    def __init__(self, web_hook_list):
+    def __init__(self, web_hook_list, resend_times=1):
         self.web_hook_list = web_hook_list
+        self.resend_times = resend_times
 
-    def _is_reached_message_send_limit(self, content):
+    def _is_reached_message_send_limit(self, info):
         """
         是否达到发送上限
+        :param info:
+        :return:
+        """
+        msg_md = ''
+        times = FlylogMsgCache(info, msg_md).get_times()
+        return times < self.resend_times
+
+    @staticmethod
+    def find_info(content):
+        """
+        提取content中 文件名 行号 函数名 组成 的字符
         :param content:
         :return:
         """
-
-
+        pattern = re.compile('[[](.*?)[]]', re.S)
+        res_list = re.findall(pattern, content)
+        if not res_list or len(res_list) < 4:
+            return ''
+        return res_list[4]
 
     def emit(self, title, content):
 
         full_content = '\n\n'.join([title, content])
         headers = {'Content-Type': 'application/json'}
         data = json.dumps({"msgtype": "text", "text": {"content": full_content}})
+
+        info = self.find_info(content)
+        if not info:
+            logger.error('file info invalid content info: %s', content)
+            return False
+
+        if self._is_reached_message_send_limit(info):
+            logger.error('log info reached resend limit content: %s', content)
+            return True
 
         res_list = []
         for web_hook in self.web_hook_list:

@@ -165,7 +165,7 @@ class HelperRedis(object):
     _REDIS_PORT = 6379
     _REDIS_DB_SELECT = 2
     _REDIS_AUTO_EXPIRE = True
-    _REDIS_APP_DEFAULT_EXPIRE_SECONDS = 24 * 60 * 60 * 3
+    _REDIS_APP_DEFAULT_EXPIRE_SECONDS = 24 * 60 * 60
 
     redis_setting = dict(
         host=_REDIS_HOST,
@@ -239,31 +239,28 @@ redis_default = HelperRedis(REDIS_DB_APP_DEFAULT)
 class FlylogMsgCache(object):
 
     rds = redis_default
-    expire_time = 60 * 60 * 24
-    REDIS_KEY_FLYLOG_MSG = 'redis_key_flylog_msg_{filename}_{line_no}_{msg_md}'
+    REDIS_KEY_FLYLOG_MSG = 'redis_key_flylog_msg_{info}_{msg_md}'
 
-    def __init__(self, filename, line_no, msg_md):
-        self.redis_key = self.REDIS_KEY_FLYLOG_MSG.format(filename=filename, line_no=line_no, msg_md=msg_md)
+    def __init__(self, info, msg_md):
+        self.redis_key = self.REDIS_KEY_FLYLOG_MSG.format(info=info, msg_md=msg_md)
 
-    def _set_record(self, value):
-        return self.rds.setex(self.redis_key, self.expire_time, value)
+    def set(self, value):
+        self.rds.set(self.redis_key, value)
+        self.rds.set_expire(self.redis_key)
 
-    def _get_record(self):
+    def get(self):
         return self.rds.get(self.redis_key)
 
-    def incr(self):
-        times = self._get_record()
-        times =
-        if times:
-            times = int(times)
-            times += 1
-            self._set_record(times)
+    def incr(self, num=1):
+        return self.rds.incr(self.redis_key, num)
+
+    def set_times(self):
+        times = self.get()
+        if not times:
+            self.set(1)
         else:
-            times = 1
-            self._set_record(1)
+            self.incr()
 
-
-
-
-
-
+    def get_times(self):
+        times = self.get()
+        return int(times) if times else 0
