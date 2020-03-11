@@ -1,6 +1,8 @@
 # -*- coding: utf-8 -*-
 
 import sys
+import re
+import hashlib
 from .six import reraise
 
 
@@ -47,3 +49,31 @@ def import_string(import_name, silent=False):
         if not silent:
             t, v, tb = sys.exc_info()
             reraise(t, v, tb)
+
+
+class TextHandlerBase(object):
+
+    @classmethod
+    def handle(cls, content):
+        raise NotImplementedError()
+
+
+class TextHandlerPokio(TextHandlerBase):
+
+    @classmethod
+    def handle(cls, content):
+        """
+        :param content:
+        :return:
+        """
+        pattern = re.compile('[[](.*?)[]]', re.S)
+        res_list = re.findall(pattern, content)
+        if not res_list or len(res_list) < 3:
+            return ''
+        new_content = content
+        tmp_text = new_content.replace(res_list[2], '')
+        tmp_text = tmp_text.replace(res_list[3], '')
+        return hashlib.md5(tmp_text)
+
+
+
