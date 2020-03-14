@@ -32,6 +32,15 @@ BACKENDS = {
         'class': 'flylog.server.backends.robot.DingRobot',
         'init_data': {
             'web_hook_list': [],
+            'resend_times': 2,
+            'redis_setting:': {
+                'db_name': 'db_name',
+                'host': '127.0.0.1',
+                'port': '22',
+                'password': '123456',
+                'db': '13',
+                'auto_expire': 3*24*24,
+            },
         }
     },
 

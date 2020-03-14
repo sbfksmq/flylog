@@ -68,7 +68,7 @@ class TextHandlerPokio(TextHandlerBase):
         """
         pattern = re.compile('[[](.*?)[]]', re.S)
         res_list = re.findall(pattern, content)
-        if not res_list or len(res_list) < 3:
+        if not res_list or len(res_list) < 4:
             return ''
         new_content = content
         tmp_text = new_content.replace(res_list[2], '')

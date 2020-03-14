@@ -160,23 +160,23 @@ class HelperRedis(object):
     auto_expire = False
 
     # 需要配置文件可配
-    _REDIS_HOST = 'r-4xo9adac337e0a04.redis.germany.rds.aliyuncs.com'
-    _REDIS_PASSWORD = 'Qff60f9a1b5470'
-    _REDIS_PORT = 6379
-    _REDIS_DB_SELECT = 2
-    _REDIS_AUTO_EXPIRE = True
-    _REDIS_APP_DEFAULT_EXPIRE_SECONDS = 24 * 60 * 60
+    # _REDIS_HOST = '127.0.0.1'
+    # _REDIS_PASSWORD = 'Qff60f9a1b5470'
+    # _REDIS_PORT = 6379
+    # _REDIS_DB_SELECT = 2
+    # _REDIS_AUTO_EXPIRE = False
+    # _REDIS_APP_DEFAULT_EXPIRE_SECONDS = 24 * 60 * 60
+    #
+    # redis_setting = dict(
+    #     host=_REDIS_HOST,
+    #     port=_REDIS_PORT,
+    #     password=_REDIS_PASSWORD,
+    #     db=_REDIS_DB_SELECT,
+    #     auto_expire=_REDIS_AUTO_EXPIRE,
+    # )
 
-    redis_setting = dict(
-        host=_REDIS_HOST,
-        port=_REDIS_PORT,
-        password=_REDIS_PASSWORD,
-        db=_REDIS_DB_SELECT,
-        auto_expire=_REDIS_AUTO_EXPIRE,
-    )
-
-    def __init__(self, db_name):
-        _conf = copy.deepcopy(self.redis_setting)
+    def __init__(self, db_name, redis_setting):
+        _conf = copy.deepcopy(redis_setting)
 
         self.auto_expire = _conf.pop('auto_expire', False)
 
@@ -184,7 +184,7 @@ class HelperRedis(object):
         if not self.rds:
             self.connections[db_name] = self.rds = BaseRedis(**_conf)
 
-    def set_expire(self, name, expire_time=_REDIS_APP_DEFAULT_EXPIRE_SECONDS):
+    def set_expire(self, name, expire_time=24*60*60):
         self.rds.expire(name, expire_time)
 
     @check_expire
@@ -231,18 +231,16 @@ class HelperRedis(object):
         return getattr(self.rds, item)
 
 
-# 默认redis实例
-REDIS_DB_APP_DEFAULT = 'app_default'
-redis_default = HelperRedis(REDIS_DB_APP_DEFAULT)
-
-
 class FlylogMsgCache(object):
 
-    rds = redis_default
-    REDIS_KEY_FLYLOG_MSG = 'redis_key_flylog_msg_{msg_md}'
+    REDIS_KEY_FLYLOG_MSG = 'redis_key_flylog_msg_{content_md}'
 
-    def __init__(self, msg_md):
-        self.redis_key = self.REDIS_KEY_FLYLOG_MSG.format(msg_md=msg_md)
+    def __init__(self, content_md, redis_setting):
+        self.redis_key = self.REDIS_KEY_FLYLOG_MSG.format(content_md=content_md)
+
+        self.redis_setting = redis_setting
+        redis_default = HelperRedis(redis_setting.get('db_name', 'app_default'), self.redis_setting)
+        self.rds = redis_default
 
     def set(self, value):
         self.rds.set(self.redis_key, value)
@@ -255,6 +253,8 @@ class FlylogMsgCache(object):
         return self.rds.incr(self.redis_key, num)
 
     def set_times(self):
+        if not self.redis_setting:
+            return
         times = self.get()
         if not times:
             self.set(1)
