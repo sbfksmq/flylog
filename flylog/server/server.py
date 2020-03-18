@@ -64,7 +64,7 @@ class Server(object):
                 backend_name = handler['backend']
                 params = handler['params']
                 if self.is_exist_filter_keyword(source, handler['keyword_filter_list']):
-                    logger.debug('trace debug source: %s', source, handler['keyword_filter_list'])
+                    logger.info('trace debug source: %s', source, handler['keyword_filter_list'])
                     continue
 
                 merged_backends[backend_name] = self._merge_backend_params(

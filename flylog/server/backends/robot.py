@@ -26,7 +26,7 @@ class DingRobot(object):
         headers = {'Content-Type': 'application/json'}
         data = json.dumps({"msgtype": "text", "text": {"content": full_content}})
 
-        logger.debug('trace debug redis_setting: %s', self.redis_setting)
+        logger.info('trace debug redis_setting: %s', self.redis_setting)
 
         if self.redis_setting:
             content_md = TextHandlerPokio.handle(content)
