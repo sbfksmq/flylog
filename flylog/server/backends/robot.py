@@ -29,13 +29,13 @@ class DingRobot(object):
         logger.info('trace debug redis_setting: %s', self.redis_setting)
 
         if self.redis_setting:
-            content_md = TextHandlerPokio.handle(content)
+            content_md = TextHandlerPokio.handle(full_content)
             if not content_md:
-                logger.error('file info invalid content info: %s', content)
+                logger.error('file info invalid content info: %s', full_content)
                 return False
 
             if self._is_reached_message_send_limit(content_md):
-                logger.error('log info reached resend limit content: %s', content)
+                logger.error('log info reached resend limit content: %s', full_content)
                 return True
 
             logger.info('trace debug content md: %s', content_md)
