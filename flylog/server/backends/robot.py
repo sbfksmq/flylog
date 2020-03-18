@@ -38,6 +38,7 @@ class DingRobot(object):
                 logger.error('log info reached resend limit content: %s', content)
                 return True
 
+            logger.info('trace debug content md: %s', content_md)
             FlylogMsgCache(content_md, self.redis_setting).set_times()
 
         res_list = []
