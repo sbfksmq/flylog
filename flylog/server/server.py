@@ -9,6 +9,9 @@
 """
 
 from __future__ import unicode_literals
+import time
+import datetime
+
 
 import logging.config
 import json
@@ -23,7 +26,7 @@ from .utils import TextHandlerPokio
 
 class Server(object):
     backend_dict = None
-
+    LOG_URL = 'https://mg.pokio.com/error_list?md5={md5}&date={date}'
     def __init__(self, config=None):
         self.config = config
         if hasattr(config, 'LOGGING'):
@@ -63,6 +66,7 @@ class Server(object):
         # backend_name -> params
         merged_backends = defaultdict(dict)
 
+        content_md = ''
         if self.redis_setting:
             content_md = TextHandlerPokio.handle(content)
             if not content_md:
@@ -92,6 +96,11 @@ class Server(object):
                     params
                 )
 
+        date_time = datetime.datetime.fromtimestamp(int(time.time()))
+        date = date_time.strftime('%Y%m%d')
+        log_end_url = self.LOG_URL.format(md5=content_md, date=date)
+
+        content += log_end_url
         for backend_name, params in merged_backends.items():
             _thread.start_new_thread(self._process_backend_emit, (backend_name, params, title, content))
 
