@@ -238,9 +238,11 @@ class FlylogMsgCache(object):
     def __init__(self, content_md, redis_setting):
         self.redis_key = self.REDIS_KEY_FLYLOG_MSG.format(content_md=content_md)
 
+        self.auto_expire = redis_setting.pop('auto_expire', False)
+        self.db_name = redis_setting.pop('db_name', 'app_default')
         self.redis_setting = redis_setting
-        redis_default = HelperRedis(redis_setting.get('db_name', 'app_default'), self.redis_setting)
-        self.rds = redis_default
+
+        self.rds = HelperRedis(self.db_name, self.redis_setting)
 
     def set(self, value):
         self.rds.set(self.redis_key, value)
