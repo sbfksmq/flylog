@@ -54,6 +54,20 @@ BACKENDS = {
     },
 }
 
+FILTER_SETTING = {
+    # 为了避免发送重复的日志  通过 日志内容的md5值为key记录重复次数
+    'resend_times': 2,
+    'redis_setting': {
+        'db_name': 'app_default',
+        'host': '127.0.0.1',
+        'port': '6379',
+        'password': '',
+        'db': '2',
+        'auto_expire': 3 * 24 * 24,
+    }
+}
+
+
 ROLES = {
     'default': [
         {

@@ -69,11 +69,11 @@ class TextHandlerPokio(TextHandlerBase):
         """
         pattern = re.compile('[[](.*?)[]]', re.S)
         res_list = re.findall(pattern, content)
-        if not res_list or len(res_list) < 4:
+        if not res_list or len(res_list) < 3:
             return ''
         new_content = content
-        tmp_text = new_content.replace(res_list[2], '')
-        tmp_text = tmp_text.replace(res_list[3], '')
+        tmp_text = new_content.replace(res_list[1], '')
+        tmp_text = tmp_text.replace(res_list[2], '')
         logger.info('trace debug tmp_text: %s', tmp_text)
         return hashlib.md5(tmp_text).hexdigest()
 

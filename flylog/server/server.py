@@ -17,7 +17,8 @@ from collections import defaultdict
 from .six import socketserver, _thread
 from .utils import import_string
 from .log import logger
-
+from .redis_helper import FlylogMsgCache
+from .utils import TextHandlerPokio
 
 class Server(object):
     backend_dict = None
@@ -34,12 +35,18 @@ class Server(object):
 
             self.backend_dict[name] = backend
 
+        self.resend_times = config.FILTER_SETTING.get('resend_times', 0)
+        self.redis_setting = config.FILTER_SETTING.get('redis_setting', {})
+
     @staticmethod
     def is_exist_filter_keyword(source, keyword_filter_list):
         for keyword in keyword_filter_list:
             if keyword in source:
                 return True
         return False
+
+    def _is_reached_message_send_limit(self, content_md):
+        return FlylogMsgCache(content_md, self.redis_setting).get_times() >= self.resend_times
 
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
@@ -54,6 +61,19 @@ class Server(object):
 
         # backend_name -> params
         merged_backends = defaultdict(dict)
+
+        if self.redis_setting:
+            content_md = TextHandlerPokio.handle(content)
+            if not content_md:
+                logger.error('file info invalid content info: %s', content)
+                return
+
+            if self._is_reached_message_send_limit(content_md):
+                logger.error('log info reached resend limit content: %s', content)
+                return
+
+            logger.info('trace debug content md: %s', content_md)
+            FlylogMsgCache(content_md, self.redis_setting).set_times()
 
         for role in role_list:
             handler_list = self.config.ROLES.get(role)
