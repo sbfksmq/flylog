@@ -73,7 +73,7 @@ class TextHandlerPokio(TextHandlerBase):
         new_content = content
         tmp_text = new_content.replace(res_list[2], '')
         tmp_text = tmp_text.replace(res_list[3], '')
-        return hashlib.md5(tmp_text)
+        return hashlib.md5(tmp_text).hexdigest()
 
 
 
