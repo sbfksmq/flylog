@@ -242,6 +242,8 @@ class FlylogMsgCache(object):
         self.db_name = redis_setting.pop('db_name', 'app_default')
         self.redis_setting = redis_setting
 
+        logger.debug('trace debug db_name: %s, redis_setting: %s', self.db_name, self.redis_setting)
+
         self.rds = HelperRedis(self.db_name, self.redis_setting)
 
     def set(self, value):
