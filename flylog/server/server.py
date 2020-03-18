@@ -20,6 +20,7 @@ from .log import logger
 from .redis_helper import FlylogMsgCache
 from .utils import TextHandlerPokio
 
+
 class Server(object):
     backend_dict = None
 
@@ -72,7 +73,6 @@ class Server(object):
                 logger.error('log info reached resend limit content: %s', content)
                 return
 
-            logger.info('trace debug content md: %s', content_md)
             FlylogMsgCache(content_md, self.redis_setting).set_times()
 
         for role in role_list:
