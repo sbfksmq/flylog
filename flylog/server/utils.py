@@ -62,7 +62,7 @@ class TextHandlerBase(object):
 class TextHandlerPokio(TextHandlerBase):
 
     @classmethod
-    def handle(cls, content):
+    def handle_bak(cls, content):
         """
         :param content:
         :return:
@@ -76,6 +76,23 @@ class TextHandlerPokio(TextHandlerBase):
         tmp_text = tmp_text.replace(res_list[2], '')
         logger.info('trace debug tmp_text: %s', tmp_text)
         return hashlib.md5(tmp_text).hexdigest()
+
+    @classmethod
+    def handle(cls, content):
+        """
+        :param content:
+        :return:
+        """
+        pattern = re.compile(r'\[\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}\]\[\d{1,5}:\d+\]', re.S)
+        res_list = re.findall(pattern, content)
+        if not res_list:
+            return ''
+        new_content = content
+        tmp_text = new_content.replace(res_list[0], '', 1)
+        logger.info('trace debug tmp_text: %s', tmp_text)
+
+        return hashlib.md5(tmp_text).hexdigest()
+
 
 
 

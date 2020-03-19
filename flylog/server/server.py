@@ -27,6 +27,7 @@ from .utils import TextHandlerPokio
 class Server(object):
     backend_dict = None
     LOG_URL = 'https://mg.pokio.com/error_list?md5={md5}&date={date}'
+
     def __init__(self, config=None):
         self.config = config
         if hasattr(config, 'LOGGING'):
