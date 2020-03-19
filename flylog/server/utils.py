@@ -83,7 +83,7 @@ class TextHandlerPokio(TextHandlerBase):
         :param content:
         :return:
         """
-        pattern = re.compile(r'\[\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}\]\[\d{1,5}:\d+\]', re.S)
+        pattern = re.compile(r'\[\d{4}-\d{1,2}-\d{1,2}\s\d{1,2}:\d{1,2}:\d{1,2},\d{1,3}\]\[\d{1,6}:\d+\]', re.S)
         res_list = re.findall(pattern, content)
         if not res_list:
             return ''
