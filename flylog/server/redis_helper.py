@@ -178,8 +178,6 @@ class HelperRedis(object):
     def __init__(self, db_name, redis_setting):
         _conf = copy.deepcopy(redis_setting)
 
-        self.auto_expire = _conf.pop('auto_expire', False)
-
         self.rds = self.connections.get(db_name)
         if not self.rds:
             self.connections[db_name] = self.rds = BaseRedis(**_conf)
@@ -238,30 +236,21 @@ class FlylogMsgCache(object):
     def __init__(self, content_md, redis_setting):
         self.redis_key = self.REDIS_KEY_FLYLOG_MSG.format(content_md=content_md)
 
-        self.auto_expire = redis_setting.pop('auto_expire', False)
         self.db_name = redis_setting.pop('db_name', 'app_default')
         self.redis_setting = redis_setting
 
         self.rds = HelperRedis(self.db_name, self.redis_setting)
 
-    def set(self, value):
-        self.rds.set(self.redis_key, value)
-        self.rds.set_expire(self.redis_key)
-
     def get(self):
         return self.rds.get(self.redis_key)
-
-    def incr(self, num=1):
-        return self.rds.incr(self.redis_key, num)
 
     def set_times(self):
         if not self.redis_setting:
             return
-        times = self.get()
-        if not times:
-            self.set(1)
-        else:
-            self.incr()
+
+        count = self.rds.incrby(self.redis_key, 1)
+        if count == 1:
+            self.rds.set_expire(self.redis_key)
 
     def get_times(self):
         times = self.get()
