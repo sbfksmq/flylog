@@ -2,23 +2,6 @@
 import smtplib
 
 BACKENDS = {
-    'mail': {
-        'class': 'flylog.server.backends.mail.MailBackend',
-        'init_data': {
-            'sender_list': [
-                {
-                    'host': 'smtp.qq.com',
-                    'port': smtplib.SMTP_PORT,  # smtplib.SMTP_SSL_PORT
-                    'username': 'xxx@qq.com',
-                    'password': 'xxxx',
-                    'sender': 'xxx@qq.com',
-                    'use_ssl': False,
-                    'use_tls': False,
-                },
-            ]
-        },
-    },
-
     'ding': {
         'class': 'flylog.server.backends.ding.DingBackend',
         'init_data': {
@@ -35,26 +18,9 @@ BACKENDS = {
                 'https://oapi.dingtalk.com/robot/send?access_token=5ccc235d16a06cfb097a24d5bcc4a8302593af52bb702250859ef4c6a5d07e96': [
                 'g_p_h_mtt', 'g_p_mtt2', 'g_p_mtt'],
             },
-            'resend_times': 2,
-            'redis_setting:': {
-                'db_name': 'db_name',
-                'host': '127.0.0.1',
-                'port': '22',
-                'password': '123456',
-                'db': '13',
-                'auto_expire': 3*24*24,
-            },
         }
     },
 
-    'sendcloud': {
-        'class': 'flylog.server.backends.sendcloud.SendCloudBackend',
-        'init_data': {
-            'api_user': '',
-            'api_key': '',
-            'sender': '',
-        }
-    },
 }
 
 FILTER_SETTING = {
@@ -62,11 +28,11 @@ FILTER_SETTING = {
     'resend_times': 2,
     'redis_setting': {
         'db_name': 'app_default',
-        'host': '127.0.0.1',
+        'host': '10.0.0.72',
         'port': '6379',
         'password': '',
-        'db': '2',
-        'auto_expire': 3 * 24 * 24,
+        'db': '3',
+        'auto_expire': 1 * 24 * 24,
     }
 }
 
