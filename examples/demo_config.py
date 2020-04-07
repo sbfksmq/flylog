@@ -31,7 +31,10 @@ BACKENDS = {
     'robot': {
         'class': 'flylog.server.backends.robot.DingRobot',
         'init_data': {
-            'web_hook_list': [],
+            'web_hook_service_map': {
+                'https://oapi.dingtalk.com/robot/send?access_token=5ccc235d16a06cfb097a24d5bcc4a8302593af52bb702250859ef4c6a5d07e96': [
+                'g_p_h_mtt', 'g_p_mtt2', 'g_p_mtt'],
+            },
             'resend_times': 2,
             'redis_setting:': {
                 'db_name': 'db_name',
@@ -71,26 +74,16 @@ FILTER_SETTING = {
 ROLES = {
     'default': [
         {
-            'backend': 'mail',
-            'params': {
-                'receiver_list': ['x@qq.com'],
-            },
-            'keyword_filter_list': [],
-        },
-        {
             'backend': 'ding',
             'params': {
                 'user_list': ['1'],
                 'party_list': ['1'],
             },
-            'keyword_filter_list': [],
         },
         {
-            'backend': 'sendcloud',
+            'backend': 'robot',
             'params': {
-                'receiver_list': ['x@qq.com'],
-            },
-            'keyword_filter_list': [],
+            }
         },
     ]
 }

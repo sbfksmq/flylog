@@ -1,25 +1,28 @@
 # -*- coding: utf-8 -*-
 import json
 import requests
+from ..log import logger
 
 
 class DingRobot(object):
 
-    ERROR_CODE_KEYWORD = 310000
     RET_OK = 0
 
-    def __init__(self, web_hook_list):
-        self.web_hook_list = web_hook_list
+    def __init__(self, web_hook_service_map_param):
+        self.web_hook_service_map = web_hook_service_map_param
 
-    def emit(self, title, content):
+    def emit(self, title, content, source=None):
+
+        logger.info('trace data title: %s, content: %s, source: %s, map: %s',
+                    title, content, source, self.web_hook_service_map)
 
         full_content = '\n\n'.join([title, content])
         headers = {'Content-Type': 'application/json'}
         data = json.dumps({"msgtype": "text", "text": {"content": full_content}})
 
         res_list = []
-        for web_hook in self.web_hook_list:
-            rsp = requests.post(web_hook, data=data, headers=headers).json()
-            res_list.append(rsp['errcode'] in [self.ERROR_CODE_KEYWORD, self.RET_OK])
-
+        for web_hook, service_list in self.web_hook_service_map.items():
+            if source in service_list:
+                rsp = requests.post(web_hook, data=data, headers=headers).json()
+                res_list.append(rsp['errcode'] in [self.RET_OK, ])
         return False not in res_list

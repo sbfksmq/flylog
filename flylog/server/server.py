@@ -43,12 +43,33 @@ class Server(object):
         self.resend_times = config.FILTER_SETTING.get('resend_times', 0)
         self.redis_setting = config.FILTER_SETTING.get('redis_setting', {})
 
-    @staticmethod
-    def is_exist_filter_keyword(source, keyword_filter_list):
-        for keyword in keyword_filter_list:
-            if keyword in source:
-                return True
-        return False
+    def filter_backends(self, backends, source):
+        """
+        ding 和 ding robot 的输出互斥，优化输出ding robot
+        :param backends:
+        :param source
+        :return:
+        """
+        robot_config = self.config.BACKENDS.get('robot', None)
+        if not robot_config:
+            return
+
+        init_data = robot_config.get('init_data', None)
+        if not init_data:
+            return
+
+        web_hook_service_map = init_data.get('web_hook_service_map', None)
+        if not web_hook_service_map:
+            return
+
+        robot_service_list = []
+        for web_hook, service_list in web_hook_service_map.items():
+            robot_service_list += service_list
+
+        if source in robot_service_list:
+            if backends.get('ding', None):
+                backends.pop('ding')
+        return
 
     def _is_reached_message_send_limit(self, content_md):
         return FlylogMsgCache(content_md, self.redis_setting).get_times() >= self.resend_times
@@ -88,10 +109,7 @@ class Server(object):
             for handler in handler_list:
                 backend_name = handler['backend']
                 params = handler['params']
-                if self.is_exist_filter_keyword(source, handler['keyword_filter_list']):
-                    logger.info('trace debug source: %s', source, handler['keyword_filter_list'])
-                    continue
-
+                params['source'] = source
                 merged_backends[backend_name] = self._merge_backend_params(
                     merged_backends[backend_name],
                     params
@@ -100,8 +118,11 @@ class Server(object):
         date_time = datetime.datetime.fromtimestamp(int(time.time()))
         date = date_time.strftime('%Y%m%d')
         log_end_url = self.LOG_URL.format(md5=content_md, date=date)
-
         content += log_end_url
+
+        self.filter_backends(merged_backends, source)
+
+        logger.info('trace data merged_backends: %s', merged_backends)
         for backend_name, params in merged_backends.items():
             _thread.start_new_thread(self._process_backend_emit, (backend_name, params, title, content))
 
