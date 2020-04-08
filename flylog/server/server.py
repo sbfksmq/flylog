@@ -72,7 +72,7 @@ class Server(object):
         return
 
     def _is_reached_message_send_limit(self, content_md):
-        return FlylogMsgCache(content_md, self.redis_setting).get_times() >= self.resend_times
+        return FlylogMsgCache(content_md, self.redis_setting).get_times() > self.resend_times
 
     def handle_message(self, message, address):
         recv_dict = json.loads(message)
