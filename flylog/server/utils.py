@@ -89,7 +89,6 @@ class TextHandlerPokio(TextHandlerBase):
             return ''
         new_content = content
         tmp_text = new_content.replace(res_list[0], '', 1)
-        logger.info('trace debug tmp_text: %s', tmp_text)
 
         return hashlib.md5(tmp_text).hexdigest()
 

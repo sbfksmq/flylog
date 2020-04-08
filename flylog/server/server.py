@@ -52,17 +52,14 @@ class Server(object):
         """
         robot_config = self.config.BACKENDS.get('robot', None)
         if not robot_config:
-            logger.info('1')
             return
 
         init_data = robot_config.get('init_data', None)
         if not init_data:
-            logger.info('2')
             return
 
         web_hook_service_map = init_data.get('web_hook_service_map', None)
         if not web_hook_service_map:
-            logger.info('3')
             return
 
         robot_service_list = []
@@ -124,11 +121,8 @@ class Server(object):
         log_end_url = self.LOG_URL.format(md5=content_md, date=date)
         content += log_end_url
 
-        logger.info('trace origin merged_backends: %s, service_name: %s', merged_backends, service_name)
-
         self.filter_backends(merged_backends, service_name)
 
-        logger.info('trace data merged_backends: %s', merged_backends)
         for backend_name, params in merged_backends.items():
             params['service_name'] = service_name
             _thread.start_new_thread(self._process_backend_emit, (backend_name, params, title, content))
