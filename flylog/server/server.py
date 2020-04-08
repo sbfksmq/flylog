@@ -43,11 +43,11 @@ class Server(object):
         self.resend_times = config.FILTER_SETTING.get('resend_times', 0)
         self.redis_setting = config.FILTER_SETTING.get('redis_setting', {})
 
-    def filter_backends(self, backends, source):
+    def filter_backends(self, backends, service_name):
         """
         ding 和 ding robot 的输出互斥，优化输出ding robot
         :param backends:
-        :param source
+        :param service_name
         :return:
         """
         robot_config = self.config.BACKENDS.get('robot', None)
@@ -69,8 +69,8 @@ class Server(object):
         for web_hook, service_list in web_hook_service_map.items():
             robot_service_list += service_list
 
-        logging.info('trace data source: %s, robot_service_list: %s', source, robot_service_list)
-        if source in robot_service_list:
+        logging.info('trace data source: %s, robot_service_list: %s', service_name, robot_service_list)
+        if service_name in robot_service_list:
             if backends.get('ding', None):
                 backends.pop('ding')
         return
@@ -82,6 +82,7 @@ class Server(object):
         recv_dict = json.loads(message)
 
         source = recv_dict.get('source')
+        service_name = recv_dict.get('service_name')
         title = '[%s]Attention!' % source
         content = recv_dict.get('content')
 
@@ -124,9 +125,9 @@ class Server(object):
         log_end_url = self.LOG_URL.format(md5=content_md, date=date)
         content += log_end_url
 
-        logger.info('trace origin merged_backends: %s, source: %s', merged_backends, source)
+        logger.info('trace origin merged_backends: %s, service_name: %s', merged_backends, service_name)
 
-        self.filter_backends(merged_backends, source)
+        self.filter_backends(merged_backends, service_name)
 
         logger.info('trace data merged_backends: %s', merged_backends)
         for backend_name, params in merged_backends.items():

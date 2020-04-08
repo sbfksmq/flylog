@@ -37,7 +37,7 @@ class LogHandler(DatagramHandler):
         source = '%s@%s' % (self.source, self.__class__.source_ip)
         content = self.format(record)
         try:
-            s = json.dumps(dict(source=source, role_list=self.role_list, content=content))
+            s = json.dumps(dict(source=source, role_list=self.role_list, content=content, service_name=self.source))
             # python3的json.dumps返回的是str
             if not isinstance(s, bytes):
                 s = s.encode('utf-8')
