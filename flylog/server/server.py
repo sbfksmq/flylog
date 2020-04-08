@@ -52,24 +52,24 @@ class Server(object):
         """
         robot_config = self.config.BACKENDS.get('robot', None)
         if not robot_config:
-            logging.info('1')
+            logger.info('1')
             return
 
         init_data = robot_config.get('init_data', None)
         if not init_data:
-            logging.info('2')
+            logger.info('2')
             return
 
         web_hook_service_map = init_data.get('web_hook_service_map', None)
         if not web_hook_service_map:
-            logging.info('3')
+            logger.info('3')
             return
 
         robot_service_list = []
         for web_hook, service_list in web_hook_service_map.items():
             robot_service_list += service_list
 
-        logging.info('trace data source: %s, robot_service_list: %s', service_name, robot_service_list)
+        logger.info('trace data source: %s, robot_service_list: %s', service_name, robot_service_list)
         if service_name in robot_service_list:
             if backends.get('ding', None):
                 backends.pop('ding')
