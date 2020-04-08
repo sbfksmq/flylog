@@ -114,7 +114,6 @@ class Server(object):
             for handler in handler_list:
                 backend_name = handler['backend']
                 params = handler['params']
-                params['service_name'] = service_name
                 merged_backends[backend_name] = self._merge_backend_params(
                     merged_backends[backend_name],
                     params
@@ -131,6 +130,7 @@ class Server(object):
 
         logger.info('trace data merged_backends: %s', merged_backends)
         for backend_name, params in merged_backends.items():
+            params['service_name'] = service_name
             _thread.start_new_thread(self._process_backend_emit, (backend_name, params, title, content))
 
     def _merge_backend_params(self, params1, params2):
