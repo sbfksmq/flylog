@@ -24,5 +24,6 @@ class DingRobot(object):
         for web_hook, service_list in self.web_hook_service_map.items():
             if source in service_list:
                 rsp = requests.post(web_hook, data=data, headers=headers).json()
+                logger.info('trace data rsp: %s', rsp)
                 res_list.append(rsp['errcode'] in [self.RET_OK, ])
         return False not in res_list
