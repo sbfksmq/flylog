@@ -41,7 +41,7 @@ class DingBackend(object):
         self.corp_secret = corp_secret
         self.agent_id = agent_id
 
-    def emit(self, title, content, user_list=None, party_list=None, source=None):
+    def emit(self, title, content, user_list=None, party_list=None, service_name=None):
         """
         发送
         """

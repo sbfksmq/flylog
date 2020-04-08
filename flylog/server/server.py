@@ -114,7 +114,7 @@ class Server(object):
             for handler in handler_list:
                 backend_name = handler['backend']
                 params = handler['params']
-                params['source'] = source
+                params['service_name'] = service_name
                 merged_backends[backend_name] = self._merge_backend_params(
                     merged_backends[backend_name],
                     params

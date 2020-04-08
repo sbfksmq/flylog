@@ -11,10 +11,10 @@ class DingRobot(object):
     def __init__(self, web_hook_service_map):
         self.web_hook_service_map = web_hook_service_map
 
-    def emit(self, title, content, source=None):
+    def emit(self, title, content, service_name=None):
 
-        logger.info('trace data title: %s, content: %s, source: %s, map: %s',
-                    title, content, source, self.web_hook_service_map)
+        logger.info('trace data title: %s, content: %s, service_name: %s, map: %s',
+                    title, content, service_name, self.web_hook_service_map)
 
         full_content = '\n\n'.join([title, content])
         headers = {'Content-Type': 'application/json'}
@@ -22,7 +22,7 @@ class DingRobot(object):
 
         res_list = []
         for web_hook, service_list in self.web_hook_service_map.items():
-            if source in service_list:
+            if service_name in service_list:
                 rsp = requests.post(web_hook, data=data, headers=headers).json()
                 logger.info('trace data rsp: %s', rsp)
                 res_list.append(rsp['errcode'] in [self.RET_OK, ])
