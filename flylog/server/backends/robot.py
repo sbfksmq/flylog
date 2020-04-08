@@ -8,8 +8,8 @@ class DingRobot(object):
 
     RET_OK = 0
 
-    def __init__(self, web_hook_service_map_param):
-        self.web_hook_service_map = web_hook_service_map_param
+    def __init__(self, web_hook_service_map):
+        self.web_hook_service_map = web_hook_service_map
 
     def emit(self, title, content, source=None):
 
