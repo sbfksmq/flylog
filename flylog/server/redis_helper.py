@@ -237,6 +237,7 @@ class FlylogMsgCache(object):
         self.redis_key = self.REDIS_KEY_FLYLOG_MSG.format(content_md=content_md)
 
         self.db_name = redis_setting.pop('db_name', 'app_default')
+        self.auto_expire_time = redis_setting.pop('auto_expire_time', 24*60*60)
         self.redis_setting = redis_setting
 
         self.rds = HelperRedis(self.db_name, self.redis_setting)
@@ -250,7 +251,7 @@ class FlylogMsgCache(object):
 
         count = self.rds.incrby(self.redis_key, 1)
         if count == 1:
-            self.rds.set_expire(self.redis_key)
+            self.rds.set_expire(self.redis_key, self.auto_expire_time)
 
     def get_times(self):
         times = self.get()

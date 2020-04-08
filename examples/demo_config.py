@@ -32,7 +32,7 @@ FILTER_SETTING = {
         'port': '6379',
         'password': '',
         'db': '3',
-        'auto_expire': 1 * 24 * 24,
+        'auto_expire_time': 24 * 60 * 60,
     }
 }
 
